@@ -1,0 +1,160 @@
+A51 MACRO ASSEMBLER  DCPWM                                                                05/08/2026 14:59:31 PAGE     1
+
+
+MACRO ASSEMBLER A51 V8.2.7.0
+OBJECT MODULE PLACED IN dcpwm.OBJ
+ASSEMBLER INVOKED BY: C:\Users\User\AppData\Local\Keil_v5\C51\BIN\A51.EXE dcpwm.a51 SET(SMALL) DEBUG PRINT(.\Listings\dc
+                      pwm.lst) EP
+
+LOC  OBJ            LINE     SOURCE
+
+  009E                 1     T3CON   EQU 9EH
+  009D                 2     T3FD    EQU 9DH
+  0030                 3     DUTY    DATA 30H
+  0031                 4     DIR     DATA 31H
+                       5     
+0000                   6             ORG 0000H
+0000                   7     START:
+0000 75817F            8             MOV SP,   #7FH
+0003 753000            9             MOV DUTY, #00H
+0006 753100           10             MOV DIR,  #00H
+0009 759D2D           11             MOV T3FD, #02DH
+000C 759E83           12             MOV T3CON,#083H
+000F 759850           13             MOV SCON, #50H
+                      14     
+                      15             ; stop motor at start
+0012 C2A2             16             CLR  P2.2          ; ENA LOW
+0014 C2A0             17             CLR  P2.0          ; IN1 LOW
+0016 C2A1             18             CLR  P2.1          ; IN2 LOW
+                      19     
+0018                  20     MAIN:
+0018 30983D           21             JNB RI, DO_PWM
+001B E599             22             MOV A,  SBUF
+001D C298             23             CLR RI
+                      24     
+                      25             ; F = forward
+001F B4460C           26             CJNE A, #'F', CHK_R
+0022 753100           27             MOV DIR,  #00H
+0025 E530             28             MOV A,    DUTY
+0027 702F             29             JNZ DO_PWM
+0029 753032           30             MOV DUTY, #50
+002C 802A             31             SJMP DO_PWM
+                      32     
+                      33             ; R = reverse
+002E                  34     CHK_R:
+002E B4520C           35             CJNE A, #'R', CHK_S
+0031 753101           36             MOV DIR,  #01H
+0034 E530             37             MOV A,    DUTY
+0036 7020             38             JNZ DO_PWM
+0038 753032           39             MOV DUTY, #50
+003B 801B             40             SJMP DO_PWM
+                      41     
+                      42             ; S = stop
+003D                  43     CHK_S:
+003D B45308           44             CJNE A, #'S', CHK_SPEED
+0040 753000           45             MOV DUTY, #00H
+0043 753100           46             MOV DIR,  #00H
+0046 8010             47             SJMP DO_PWM
+                      48     
+                      49             ; numeric = speed 1-99
+0048                  50     CHK_SPEED:
+0048 F5F0             51             MOV B, A
+004A C3               52             CLR C
+004B 9401             53             SUBB A, #01H
+004D 4009             54             JC   DO_PWM
+004F E5F0             55             MOV  A, B
+0051 B46402           56             CJNE A, #100, SET_SPD
+0054 7463             57             MOV  A, #99
+A51 MACRO ASSEMBLER  DCPWM                                                                05/08/2026 14:59:31 PAGE     2
+
+0056                  58     SET_SPD:
+0056 F530             59             MOV DUTY, A
+                      60     
+0058                  61     DO_PWM:
+0058 E530             62             MOV A, DUTY
+005A 602B             63             JZ  MOTOR_OFF
+                      64     
+                      65             ; set direction pins
+005C E531             66             MOV A, DIR
+005E 6006             67             JZ  DO_FWD
+                      68     
+                      69             ; reverse
+0060 D2A0             70             SETB P2.0          ; IN1 HIGH
+0062 C2A1             71             CLR  P2.1          ; IN2 LOW
+0064 8004             72             SJMP ON_DELAY
+                      73     
+0066                  74     DO_FWD:
+                      75             ; forward
+0066 C2A0             76             CLR  P2.0          ; IN1 LOW
+0068 D2A1             77             SETB P2.1          ; IN2 HIGH
+                      78     
+006A                  79     ON_DELAY:
+                      80             ; ENA HIGH = motor ON
+006A D2A2             81             SETB P2.2
+006C E530             82             MOV A,  DUTY
+006E F8               83             MOV R0, A
+006F                  84     ON_LP:
+006F 7905             85             MOV R1, #05H
+0071                  86     ON_LP2:
+0071 D9FE             87             DJNZ R1, ON_LP2
+0073 D8FA             88             DJNZ R0, ON_LP
+                      89     
+                      90             ; ENA LOW = motor OFF
+0075 C2A2             91             CLR  P2.2
+0077 7464             92             MOV A,  #100
+0079 C3               93             CLR C
+007A 9530             94             SUBB A, DUTY
+007C 609A             95             JZ   MAIN
+007E F8               96             MOV R0, A
+007F                  97     OFF_LP:
+007F 7905             98             MOV R1, #05H
+0081                  99     OFF_LP2:
+0081 D9FE            100             DJNZ R1, OFF_LP2
+0083 D8FA            101             DJNZ R0, OFF_LP
+0085 8091            102             SJMP MAIN
+                     103     
+0087                 104     MOTOR_OFF:
+0087 C2A2            105             CLR P2.2           ; ENA LOW
+0089 C2A0            106             CLR P2.0           ; IN1 LOW
+008B C2A1            107             CLR P2.1           ; IN2 LOW
+008D 8089            108             JMP MAIN
+                     109     
+                     110             END
+A51 MACRO ASSEMBLER  DCPWM                                                                05/08/2026 14:59:31 PAGE     3
+
+SYMBOL TABLE LISTING
+------ ----- -------
+
+
+N A M E             T Y P E  V A L U E   ATTRIBUTES
+
+B. . . . . . . . .  D ADDR   00F0H   A   
+CHK_R. . . . . . .  C ADDR   002EH   A   
+CHK_S. . . . . . .  C ADDR   003DH   A   
+CHK_SPEED. . . . .  C ADDR   0048H   A   
+DIR. . . . . . . .  D ADDR   0031H   A   
+DO_FWD . . . . . .  C ADDR   0066H   A   
+DO_PWM . . . . . .  C ADDR   0058H   A   
+DUTY . . . . . . .  D ADDR   0030H   A   
+MAIN . . . . . . .  C ADDR   0018H   A   
+MOTOR_OFF. . . . .  C ADDR   0087H   A   
+OFF_LP . . . . . .  C ADDR   007FH   A   
+OFF_LP2. . . . . .  C ADDR   0081H   A   
+ON_DELAY . . . . .  C ADDR   006AH   A   
+ON_LP. . . . . . .  C ADDR   006FH   A   
+ON_LP2 . . . . . .  C ADDR   0071H   A   
+P2 . . . . . . . .  D ADDR   00A0H   A   
+RI . . . . . . . .  B ADDR   0098H.0 A   
+SBUF . . . . . . .  D ADDR   0099H   A   
+SCON . . . . . . .  D ADDR   0098H   A   
+SET_SPD. . . . . .  C ADDR   0056H   A   
+SP . . . . . . . .  D ADDR   0081H   A   
+START. . . . . . .  C ADDR   0000H   A   
+T3CON. . . . . . .  N NUMB   009EH   A   
+T3FD . . . . . . .  N NUMB   009DH   A   
+
+
+REGISTER BANK(S) USED: 0 
+
+
+ASSEMBLY COMPLETE.  0 WARNING(S), 0 ERROR(S)

@@ -1,0 +1,95 @@
+A51 MACRO ASSEMBLER  ADC                                                                  03/01/2026 22:30:42 PAGE     1
+
+
+MACRO ASSEMBLER A51 V8.2.7.0
+OBJECT MODULE PLACED IN .\Objects\adc.obj
+ASSEMBLER INVOKED BY: C:\Users\User\AppData\Local\Keil_v5\C51\BIN\A51.EXE adc.a51 SET(SMALL) DEBUG PRINT(.\Listings\adc.
+                      lst) OBJECT(.\Objects\adc.obj) EP
+
+LOC  OBJ            LINE     SOURCE
+
+                       1     $mod51 
+  00DC                 2             SCONV    EQU 0DCH
+  00DF                 3             ADCI     EQU 0DFH
+  00EF                 4             ADCCON1  EQU 0xEF
+  00D8                 5             ADCCON2  EQU 0xD8
+  00D9                 6             ADCDATAL EQU 0xD9
+  00DA                 7             ADCDATAH EQU 0xDA
+  009D                 8             T3FD     EQU 0x9D
+  009E                 9             T3CON    EQU 0x9E
+  00AE                10             EADC     EQU 0xAE
+                      11             
+----                  12             CSEG
+0000                  13                     ORG 0000H
+  00B4                14                             LED EQU P3.4
+0000 2100             15                     JMP MAIN
+0100                  16                     ORG 0100H
+0100 759E83           17     MAIN: MOV T3CON, #83H
+0103 759D2D           18           MOV T3FD, #02DH
+0106 759852           19               MOV SCON, #52H
+0109 75EF8C           20               MOV ADCCON1, #08CH
+010C 75D800           21               MOV ADCCON2, #00H
+                      22               
+010F D2DC             23     OKU:  SETB SCONV
+0111 30DFFD           24           JNB ADCI, $
+0114 C2DF             25               CLR ADCI
+0116 E5DA             26               MOV A, ADCDATAH
+0118 3126             27               CALL SENDVAL
+011A E5D9             28               MOV A, ADCDATAL
+011C 3126             29               CALL SENDVAL
+                      30               
+011E                  31     AGAIN:
+011E B2B4             32           CPL LED
+0120 790A             33               MOV R1, #10;
+0122 312E             34               CALL DELAY
+0124 80E9             35               JMP OKU
+                      36               
+0126                  37     SENDVAL: 
+0126 3099FD           38           JNB TI, $
+0129 C299             39               CLR TI
+012B F599             40               MOV SBUF,A
+012D 22               41               RET
+012E                  42               DELAY: 
+012E 7A1B             43               DLY0: MOV R2, #1BH
+0130 7BFF             44               DLY1: MOV R3, #0FFH
+0132 DBFE             45                             DJNZ R3, $
+0134 DAFA             46                             DJNZ R2, DLY1
+0136 D9F6             47                             DJNZ R1, DLY0
+0138 22               48                             RET
+                      49             END
+                                             
+A51 MACRO ASSEMBLER  ADC                                                                  03/01/2026 22:30:42 PAGE     2
+
+SYMBOL TABLE LISTING
+------ ----- -------
+
+
+N A M E             T Y P E  V A L U E   ATTRIBUTES
+
+ADCCON1. . . . . .  N NUMB   00EFH   A   
+ADCCON2. . . . . .  N NUMB   00D8H   A   
+ADCDATAH . . . . .  N NUMB   00DAH   A   
+ADCDATAL . . . . .  N NUMB   00D9H   A   
+ADCI . . . . . . .  N NUMB   00DFH   A   
+AGAIN. . . . . . .  C ADDR   011EH   A   
+DELAY. . . . . . .  C ADDR   012EH   A   
+DLY0 . . . . . . .  C ADDR   012EH   A   
+DLY1 . . . . . . .  C ADDR   0130H   A   
+EADC . . . . . . .  N NUMB   00AEH   A   
+LED. . . . . . . .  B ADDR   00B0H.4 A   
+MAIN . . . . . . .  C ADDR   0100H   A   
+OKU. . . . . . . .  C ADDR   010FH   A   
+P3 . . . . . . . .  D ADDR   00B0H   A   
+SBUF . . . . . . .  D ADDR   0099H   A   
+SCON . . . . . . .  D ADDR   0098H   A   
+SCONV. . . . . . .  N NUMB   00DCH   A   
+SENDVAL. . . . . .  C ADDR   0126H   A   
+T3CON. . . . . . .  N NUMB   009EH   A   
+T3FD . . . . . . .  N NUMB   009DH   A   
+TI . . . . . . . .  B ADDR   0098H.1 A   
+
+
+REGISTER BANK(S) USED: 0 
+
+
+ASSEMBLY COMPLETE.  0 WARNING(S), 0 ERROR(S)

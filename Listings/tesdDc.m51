@@ -1,0 +1,54 @@
+BL51 BANKED LINKER/LOCATER V6.22.4.0                                                    05/06/2026  23:51:30  PAGE 1
+
+
+BL51 BANKED LINKER/LOCATER V6.22.4.0, INVOKED BY:
+C:\USERS\USER\APPDATA\LOCAL\KEIL_V5\C51\BIN\BL51.EXE .\Objects\testdc.obj TO .\Objects\tesdDc PRINT (.\Listings\tesdDc.m
+>> 51) RAMSIZE (256)
+
+
+INPUT MODULES INCLUDED:
+  .\Objects\testdc.obj (TESTDC)
+
+
+LINK MAP OF MODULE:  .\Objects\tesdDc (TESTDC)
+
+
+            TYPE    BASE      LENGTH    RELOCATION   SEGMENT NAME
+            -----------------------------------------------------
+
+            * * * * * * *   D A T A   M E M O R Y   * * * * * * *
+            REG     0000H     0008H     ABSOLUTE     "REG BANK 0"
+
+            * * * * * * *   C O D E   M E M O R Y   * * * * * * *
+            CODE    0000H     010AH     ABSOLUTE     
+
+
+
+SYMBOL TABLE OF MODULE:  .\Objects\tesdDc (TESTDC)
+
+  VALUE           TYPE          NAME
+  ----------------------------------
+
+  -------         MODULE        TESTDC
+  N:00EFH         SYMBOL        ADCCON1
+  N:00D8H         SYMBOL        ADCCON2
+  N:00DAH         SYMBOL        ADCDATAH
+  N:00D9H         SYMBOL        ADCDATAL
+  N:00DFH         SYMBOL        ADCI
+  C:0100H         SYMBOL        MAIN
+  D:00A0H         SYMBOL        P2
+  N:00DCH         SYMBOL        SCONV
+  C:0000H         LINE#         12
+  C:0100H         LINE#         20
+  C:0102H         LINE#         21
+  C:0104H         LINE#         23
+  C:0106H         LINE#         24
+  C:0108H         LINE#         26
+  -------         ENDMOD        TESTDC
+
+******************************************************************************
+* RESTRICTED VERSION WITH 0800H BYTE CODE SIZE LIMIT; USED: 000CH BYTE ( 0%) *
+******************************************************************************
+
+Program Size: data=8.0 xdata=0 code=266
+LINK/LOCATE RUN COMPLETE.  0 WARNING(S),  0 ERROR(S)

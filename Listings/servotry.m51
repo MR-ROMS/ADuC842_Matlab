@@ -1,0 +1,173 @@
+BL51 BANKED LINKER/LOCATER V6.22.4.0                                                    06/22/2026  20:23:21  PAGE 1
+
+
+BL51 BANKED LINKER/LOCATER V6.22.4.0, INVOKED BY:
+C:\USERS\USER\APPDATA\LOCAL\KEIL_V5\C51\BIN\BL51.EXE .\Objects\trial.obj TO .\Objects\servotry PRINT (.\Listings\servotr
+>> y.m51) RAMSIZE (256)
+
+
+INPUT MODULES INCLUDED:
+  .\Objects\trial.obj (TRIAL)
+
+
+LINK MAP OF MODULE:  .\Objects\servotry (TRIAL)
+
+
+            TYPE    BASE      LENGTH    RELOCATION   SEGMENT NAME
+            -----------------------------------------------------
+
+            * * * * * * *   D A T A   M E M O R Y   * * * * * * *
+            REG     0000H     0008H     ABSOLUTE     "REG BANK 0"
+
+            * * * * * * *   C O D E   M E M O R Y   * * * * * * *
+            CODE    0000H     0136H     ABSOLUTE     
+
+
+
+SYMBOL TABLE OF MODULE:  .\Objects\servotry (TRIAL)
+
+  VALUE           TYPE          NAME
+  ----------------------------------
+
+  -------         MODULE        TRIAL
+  C:0060H         SYMBOL        BASLA
+  C:0107H         SYMBOL        CLK_PULSE
+  C:0126H         SYMBOL        G1
+  C:011FH         SYMBOL        I2C_ACK_HIGH
+  C:010DH         SYMBOL        I2C_CLK_HIGH
+  C:0113H         SYMBOL        I2C_CLK_LOW
+  C:00FEH         SYMBOL        I2C_DONGU
+  C:00DCH         SYMBOL        I2C_START
+  C:00E2H         SYMBOL        I2C_START_DELAY1
+  C:00E8H         SYMBOL        I2C_START_DELAY2
+  C:00EDH         SYMBOL        I2C_STOP
+  C:00F1H         SYMBOL        I2C_STOP_DELAY1
+  C:00F7H         SYMBOL        I2C_STOP_DELAY2
+  C:00FCH         SYMBOL        I2C_YAZ
+  C:0124H         SYMBOL        KISA_GECIKME
+  D:00A0H         SYMBOL        P2
+  N:0080H         SYMBOL        PCA_ADDR
+  C:006EH         SYMBOL        PCA_KURULUM
+  B:00A0H.1       SYMBOL        SCL
+  B:00A0H.0       SYMBOL        SDA
+  C:00B7H         SYMBOL        SERVO_0_DOKSAN_DERECE
+  C:0066H         SYMBOL        SONSUZ_DONGU
+  D:0081H         SYMBOL        SP
+  C:012BH         SYMBOL        U1
+  C:012DH         SYMBOL        U2
+  C:012FH         SYMBOL        U3
+  C:0129H         SYMBOL        UZUN_GECIKME
+  C:0105H         SYMBOL        YAZ_BIR
+  C:0000H         LINE#         14
+BL51 BANKED LINKER/LOCATER V6.22.4.0                                                  06/22/2026  20:23:21  PAGE 2
+
+
+  C:0060H         LINE#         18
+  C:0063H         LINE#         19
+  C:0066H         LINE#         22
+  C:0069H         LINE#         23
+  C:006CH         LINE#         24
+  C:006EH         LINE#         27
+  C:0071H         LINE#         28
+  C:0073H         LINE#         29
+  C:0076H         LINE#         30
+  C:0078H         LINE#         31
+  C:007BH         LINE#         32
+  C:007DH         LINE#         33
+  C:0080H         LINE#         34
+  C:0083H         LINE#         35
+  C:0086H         LINE#         37
+  C:0089H         LINE#         38
+  C:008BH         LINE#         39
+  C:008EH         LINE#         40
+  C:0090H         LINE#         41
+  C:0093H         LINE#         42
+  C:0095H         LINE#         43
+  C:0098H         LINE#         44
+  C:009BH         LINE#         45
+  C:009EH         LINE#         47
+  C:00A1H         LINE#         48
+  C:00A3H         LINE#         49
+  C:00A6H         LINE#         50
+  C:00A8H         LINE#         51
+  C:00ABH         LINE#         52
+  C:00ADH         LINE#         53
+  C:00B0H         LINE#         54
+  C:00B3H         LINE#         55
+  C:00B6H         LINE#         56
+  C:00B7H         LINE#         59
+  C:00BAH         LINE#         60
+  C:00BCH         LINE#         61
+  C:00BFH         LINE#         62
+  C:00C1H         LINE#         63
+  C:00C4H         LINE#         64
+  C:00C6H         LINE#         65
+  C:00C9H         LINE#         66
+  C:00CBH         LINE#         67
+  C:00CEH         LINE#         68
+  C:00D0H         LINE#         69
+  C:00D3H         LINE#         70
+  C:00D5H         LINE#         71
+  C:00D8H         LINE#         72
+  C:00DBH         LINE#         73
+  C:00DCH         LINE#         79
+  C:00DEH         LINE#         80
+  C:00E0H         LINE#         81
+  C:00E2H         LINE#         83
+  C:00E4H         LINE#         84
+  C:00E6H         LINE#         85
+  C:00E8H         LINE#         87
+  C:00EAH         LINE#         88
+  C:00ECH         LINE#         89
+BL51 BANKED LINKER/LOCATER V6.22.4.0                                                  06/22/2026  20:23:21  PAGE 3
+
+
+  C:00EDH         LINE#         92
+  C:00EFH         LINE#         93
+  C:00F1H         LINE#         95
+  C:00F3H         LINE#         96
+  C:00F5H         LINE#         97
+  C:00F7H         LINE#         99
+  C:00F9H         LINE#         100
+  C:00FBH         LINE#         101
+  C:00FCH         LINE#         104
+  C:00FEH         LINE#         106
+  C:00FFH         LINE#         107
+  C:0101H         LINE#         108
+  C:0103H         LINE#         109
+  C:0105H         LINE#         111
+  C:0107H         LINE#         113
+  C:0108H         LINE#         114
+  C:0109H         LINE#         115
+  C:010BH         LINE#         116
+  C:010DH         LINE#         118
+  C:010FH         LINE#         119
+  C:0111H         LINE#         120
+  C:0113H         LINE#         122
+  C:0115H         LINE#         123
+  C:0117H         LINE#         125
+  C:0119H         LINE#         126
+  C:011AH         LINE#         127
+  C:011BH         LINE#         128
+  C:011DH         LINE#         129
+  C:011FH         LINE#         131
+  C:0121H         LINE#         132
+  C:0123H         LINE#         133
+  C:0124H         LINE#         139
+  C:0126H         LINE#         140
+  C:0128H         LINE#         141
+  C:0129H         LINE#         144
+  C:012BH         LINE#         145
+  C:012DH         LINE#         146
+  C:012FH         LINE#         147
+  C:0131H         LINE#         148
+  C:0133H         LINE#         149
+  C:0135H         LINE#         150
+  -------         ENDMOD        TRIAL
+
+******************************************************************************
+* RESTRICTED VERSION WITH 0800H BYTE CODE SIZE LIMIT; USED: 00D8H BYTE (10%) *
+******************************************************************************
+
+Program Size: data=8.0 xdata=0 code=310
+LINK/LOCATE RUN COMPLETE.  0 WARNING(S),  0 ERROR(S)

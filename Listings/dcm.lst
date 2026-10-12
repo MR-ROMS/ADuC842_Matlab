@@ -1,0 +1,170 @@
+A51 MACRO ASSEMBLER  DCM                                                                  05/08/2026 13:27:04 PAGE     1
+
+
+MACRO ASSEMBLER A51 V8.2.7.0
+OBJECT MODULE PLACED IN .\Objects\dcm.obj
+ASSEMBLER INVOKED BY: C:\Users\User\AppData\Local\Keil_v5\C51\BIN\A51.EXE dcm.a51 SET(SMALL) DEBUG PRINT(.\Listings\dcm.
+                      lst) OBJECT(.\Objects\dcm.obj) EP
+
+LOC  OBJ            LINE     SOURCE
+
+                       1     $mod51 
+                       2     ;------------------------------------------------------------------------------
+                       3     ; ADuC842 Assembly – DC Motor Control via UART (Timer3)
+                       4     ; Receives [speed, direction] from MATLAB
+                       5     ; speed = 0 (stop), 20–230 (PWM safe range)
+                       6     ;------------------------------------------------------------------------------
+                       7     
+  009D                 8     T3FD    DATA 09DH
+  009E                 9     T3CON   DATA 09EH
+                      10     
+----                  11     CSEG
+0000                  12         ORG 0000H
+0000 020100           13         LJMP MAIN
+0100                  14         ORG 0100H
+                      15     
+0100                  16     MAIN:
+                      17         ; UART init using Timer3
+0100 759E86           18         MOV T3CON, #086H
+0103 759D2D           19         MOV T3FD,  #02DH
+0106 759850           20         MOV SCON,  #050H
+                      21     
+                      22         ; initialize
+0109 7B00             23         MOV R3, #00H        ; duty
+010B 7D00             24         MOV R5, #00H        ; direction
+010D 3169             25         ACALL STOP
+                      26     
+010F                  27     MAIN_LOOP:
+010F                  28     WAIT_SPEED:
+010F 3098FD           29         JNB RI, WAIT_SPEED
+0112 AB99             30         MOV R3, SBUF
+0114 C298             31         CLR RI
+                      32     
+0116                  33     WAIT_DIR:
+0116 3098FD           34         JNB RI, WAIT_DIR
+0119 AD99             35         MOV R5, SBUF
+011B C298             36         CLR RI
+                      37     
+011D EB               38         MOV A, R3
+011E 6049             39         JZ STOP             ; 0 = stop
+                      40     
+                      41         ; clamp duty range
+0120 BB1402           42         CJNE R3, #14H, CHECK_HIGH
+0123 7B14             43         MOV R3, #14H        ; if <20, clamp to 20
+0125                  44     CHECK_HIGH:
+0125 BBE602           45         CJNE R3, #0E6H, NORMAL_PWM
+0128 7BE6             46         MOV R3, #0E6H       ; if >230, clamp to 230
+                      47     
+012A                  48     NORMAL_PWM:
+012A BD0004           49         CJNE R5, #00H, DO_REVERSE
+012D 3135             50         ACALL PWM_FORWARD
+012F 80DE             51         SJMP MAIN_LOOP
+0131                  52     DO_REVERSE:
+0131 314F             53         ACALL PWM_REVERSE
+0133 80DA             54         SJMP MAIN_LOOP
+                      55     
+                      56     ; -------------------------
+                      57     ; PWM FORWARD
+A51 MACRO ASSEMBLER  DCM                                                                  05/08/2026 13:27:04 PAGE     2
+
+                      58     ; -------------------------
+0135                  59     PWM_FORWARD:
+0135 D2A0             60         SETB P2.0
+0137 C2A1             61         CLR  P2.1
+0139 7CFF             62         MOV  R4, #0FFH
+                      63     
+013B                  64     F_LOOP:
+013B EB               65         MOV A, R3
+013C 602B             66         JZ STOP
+                      67     
+                      68         ; ON time = duty
+013E D2A2             69         SETB P2.2
+0140 EB               70         MOV A, R3
+0141 FE               71         MOV R6, A
+0142 DEFE             72     F_ON: DJNZ R6, F_ON
+                      73     
+                      74         ; OFF time = 255 – duty
+0144 C2A2             75         CLR P2.2
+0146 74FF             76         MOV A, #0FFH
+0148 9B               77         SUBB A, R3           ; A = 255 – duty
+0149 FE               78         MOV R6, A
+014A DEFE             79     F_OFF: DJNZ R6, F_OFF
+                      80     
+014C DCED             81         DJNZ R4, F_LOOP
+014E 22               82         RET
+                      83     
+                      84     ; -------------------------
+                      85     ; PWM REVERSE
+                      86     ; -------------------------
+014F                  87     PWM_REVERSE:
+014F C2A0             88         CLR  P2.0
+0151 D2A1             89         SETB P2.1
+0153 7CFF             90         MOV  R4, #0FFH
+                      91     
+0155                  92     R_LOOP:
+0155 EB               93         MOV A, R3
+0156 6011             94         JZ STOP
+                      95     
+                      96         ; ON time = duty
+0158 D2A2             97         SETB P2.2
+015A EB               98         MOV A, R3
+015B FE               99         MOV R6, A
+015C DEFE            100     R_ON: DJNZ R6, R_ON
+                     101     
+                     102         ; OFF time = 255 – duty
+015E C2A2            103         CLR P2.2
+0160 74FF            104         MOV A, #0FFH
+0162 9B              105         SUBB A, R3           ; A = 255 – duty
+0163 FE              106         MOV R6, A
+0164 DEFE            107     R_OFF: DJNZ R6, R_OFF
+                     108     
+0166 DCED            109         DJNZ R4, R_LOOP
+0168 22              110         RET
+                     111     
+                     112     ; -------------------------
+                     113     ; STOP
+                     114     ; -------------------------
+0169                 115     STOP:
+0169 C2A2            116         CLR P2.2              ; ENA LOW
+016B C2A0            117         CLR P2.0              ; IN1 LOW
+016D C2A1            118         CLR P2.1              ; IN2 LOW
+016F 22              119         RET
+                     120     
+                     121     END
+                             
+A51 MACRO ASSEMBLER  DCM                                                                  05/08/2026 13:27:04 PAGE     3
+
+SYMBOL TABLE LISTING
+------ ----- -------
+
+
+N A M E             T Y P E  V A L U E   ATTRIBUTES
+
+CHECK_HIGH . . . .  C ADDR   0125H   A   
+DO_REVERSE . . . .  C ADDR   0131H   A   
+F_LOOP . . . . . .  C ADDR   013BH   A   
+F_OFF. . . . . . .  C ADDR   014AH   A   
+F_ON . . . . . . .  C ADDR   0142H   A   
+MAIN . . . . . . .  C ADDR   0100H   A   
+MAIN_LOOP. . . . .  C ADDR   010FH   A   
+NORMAL_PWM . . . .  C ADDR   012AH   A   
+P2 . . . . . . . .  D ADDR   00A0H   A   
+PWM_FORWARD. . . .  C ADDR   0135H   A   
+PWM_REVERSE. . . .  C ADDR   014FH   A   
+RI . . . . . . . .  B ADDR   0098H.0 A   
+R_LOOP . . . . . .  C ADDR   0155H   A   
+R_OFF. . . . . . .  C ADDR   0164H   A   
+R_ON . . . . . . .  C ADDR   015CH   A   
+SBUF . . . . . . .  D ADDR   0099H   A   
+SCON . . . . . . .  D ADDR   0098H   A   
+STOP . . . . . . .  C ADDR   0169H   A   
+T3CON. . . . . . .  D ADDR   009EH   A   
+T3FD . . . . . . .  D ADDR   009DH   A   
+WAIT_DIR . . . . .  C ADDR   0116H   A   
+WAIT_SPEED . . . .  C ADDR   010FH   A   
+
+
+REGISTER BANK(S) USED: 0 
+
+
+ASSEMBLY COMPLETE.  0 WARNING(S), 0 ERROR(S)

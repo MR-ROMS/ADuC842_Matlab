@@ -1,0 +1,310 @@
+A51 MACRO ASSEMBLER  STEPMOTOR                                                            05/15/2026 16:20:54 PAGE     1
+
+
+MACRO ASSEMBLER A51 V8.2.7.0
+OBJECT MODULE PLACED IN .\Objects\stepmotor.obj
+ASSEMBLER INVOKED BY: C:\Users\User\AppData\Local\Keil_v5\C51\BIN\A51.EXE stepmotor.a51 SET(SMALL) DEBUG PRINT(.\Listing
+                      s\stepmotor.lst) OBJECT(.\Objects\stepmotor.obj) EP
+
+LOC  OBJ            LINE     SOURCE
+
+                       1     $mod51 
+                       2             ;GRUP 1
+                       3             ;ROMARIC SILANANG DOROBA  : 2110225556
+                       4             ;OGUZ TAHA OZTURK : 2310225059
+                       5     ; ADuC842 - Stepper Motor Controller
+                       6     ;
+                       7     ; Protocol (5 bytes from MATLAB):
+                       8     ;   Byte 0 : mode   (0=Wave, 1=Full Step, 2=Half Step)
+                       9     ;   Byte 1 : steps HIGH byte
+                      10     ;   Byte 2 : steps LOW  byte
+                      11     ;   Byte 3 : dir    (0=CW, 1=CCW)
+                      12     ;   Byte 4 : speed  (0=slowest .. 3=fastest)
+                      13     ;
+                      14     ; Motor runs exactly the requested number of steps, then
+                      15     ; sends ACK (0x06) and waits for the next command.
+                      16     ; Output: P2.0..P2.3 (lower nibble)
+                      17     
+                      18     
+  009E                19     T3CON     DATA  09EH
+  009D                20     T3FD      DATA  09DH
+                      21     
+  0020                22     MODE_SEL  DATA  20H
+  0021                23     STEP_HI   DATA  21H
+  0022                24     STEP_LO   DATA  22H
+  0023                25     DIR_SEL   DATA  23H
+  0024                26     SPEED_SEL DATA  24H
+  0025                27     SEQ_IDX   DATA  25H
+  0026                28     SEQ_LEN   DATA  26H
+  0027                29     RX_COUNT  DATA  27H
+                      30     
+0000                  31               ORG   0000H
+0000 020100           32               LJMP  MAIN
+                      33     
+0023                  34               ORG   0023H
+0023 0201DE           35               LJMP  UART_ISR
+                      36     
+0100                  37               ORG   0100H
+                      38     
+                      39     ; -------------------------------------------------------
+                      40     ; MAIN — init, then wait for a complete 5-byte packet
+                      41     ; -------------------------------------------------------
+0100                  42     MAIN:
+0100 75812F           43               MOV   SP,        #2FH
+0103 75A000           44               MOV   P2,        #00H
+                      45     
+0106 752000           46               MOV   MODE_SEL,  #00H
+0109 752100           47               MOV   STEP_HI,   #00H
+010C 752200           48               MOV   STEP_LO,   #00H
+010F 752300           49               MOV   DIR_SEL,   #00H
+0112 752402           50               MOV   SPEED_SEL, #02H
+0115 752500           51               MOV   SEQ_IDX,   #00H
+0118 752604           52               MOV   SEQ_LEN,   #04H
+011B 752700           53               MOV   RX_COUNT,  #00H
+                      54     
+011E 759D2D           55               MOV   T3FD,      #02DH
+0121 759E83           56               MOV   T3CON,     #083H
+0124 759850           57               MOV   SCON,      #050H
+A51 MACRO ASSEMBLER  STEPMOTOR                                                            05/15/2026 16:20:54 PAGE     2
+
+                      58     
+0127 D299             59               SETB  TI
+0129 C298             60               CLR   RI
+012B 75A890           61               MOV   IE,        #090H
+                      62     
+                      63     ; -------------------------------------------------------
+                      64     ; WAIT_CMD — spin until UART ISR delivers all 5 bytes
+                      65     ; -------------------------------------------------------
+012E                  66     WAIT_CMD:
+012E E527             67               MOV   A,         RX_COUNT
+0130 B405FB           68               CJNE  A,         #05H,    WAIT_CMD
+                      69     
+                      70               ; Unpack buffer 28H..2CH
+0133 E528             71               MOV   A,         28H
+0135 F520             72               MOV   MODE_SEL,  A
+                      73     
+0137 E529             74               MOV   A,         29H
+0139 F521             75               MOV   STEP_HI,   A
+                      76     
+013B E52A             77               MOV   A,         2AH
+013D F522             78               MOV   STEP_LO,   A
+                      79     
+013F E52B             80               MOV   A,         2BH
+0141 F523             81               MOV   DIR_SEL,   A
+                      82     
+0143 E52C             83               MOV   A,         2CH
+0145 5403             84               ANL   A,         #03H
+0147 F524             85               MOV   SPEED_SEL, A
+                      86     
+0149 752700           87               MOV   RX_COUNT,  #00H
+                      88     
+                      89               ; NOTE: No zero-step guard here.
+                      90               ; If STEP_HI:STEP_LO = 0 the loop below exits
+                      91               ; immediately on CHECK_DONE, ACK is sent, and
+                      92               ; we return to WAIT_CMD safely.
+                      93     
+                      94               ; --- Select table and sequence length ---
+014C E520             95               MOV   A,         MODE_SEL
+014E B40008           96               CJNE  A,         #00H,    CHK_FULL
+0151 9001F8           97               MOV   DPTR,      #WAVE_DRIVE
+0154 752604           98               MOV   SEQ_LEN,   #04H
+0157 8011             99               SJMP  INIT_IDX
+                     100     
+0159                 101     CHK_FULL:
+0159 B40108          102               CJNE  A,         #01H,    USE_HALF
+015C 9001FC          103               MOV   DPTR,      #TAM_ADIM
+015F 752604          104               MOV   SEQ_LEN,   #04H
+0162 8006            105               SJMP  INIT_IDX
+                     106     
+0164                 107     USE_HALF:
+0164 900200          108               MOV   DPTR,      #YARIM_ADIM
+0167 752608          109               MOV   SEQ_LEN,   #08H
+                     110     
+016A                 111     INIT_IDX:
+016A E523            112               MOV   A,         DIR_SEL
+016C 6007            113               JZ    START_CW
+016E E526            114               MOV   A,         SEQ_LEN
+0170 14              115               DEC   A
+0171 F525            116               MOV   SEQ_IDX,   A
+0173 8003            117               SJMP  RUN_MOTOR
+0175                 118     START_CW:
+0175 752500          119               MOV   SEQ_IDX,   #00H
+                     120     
+                     121     ; -------------------------------------------------------
+                     122     ; RUN_MOTOR — step loop, counts down STEP_HI:STEP_LO
+                     123     ; -------------------------------------------------------
+A51 MACRO ASSEMBLER  STEPMOTOR                                                            05/15/2026 16:20:54 PAGE     3
+
+0178                 124     RUN_MOTOR:
+                     125               ; Check done first — handles the STEP=0 edge case cleanly
+0178 E521            126               MOV   A,         STEP_HI
+017A 4522            127               ORL   A,         STEP_LO
+017C 6035            128               JZ    SEND_ACK
+                     129     
+                     130               ; Output phase to P2 lower nibble
+017E E525            131               MOV   A,         SEQ_IDX
+0180 93              132               MOVC  A,         @A+DPTR
+0181 FE              133               MOV   R6,        A
+0182 E5A0            134               MOV   A,         P2
+0184 54F0            135               ANL   A,         #0F0H
+0186 4E              136               ORL   A,         R6
+0187 F5A0            137               MOV   P2,        A
+                     138     
+0189 1201C4          139               LCALL DELAY_STEP
+                     140     
+                     141               ; 16-bit decrement with borrow
+018C E522            142               MOV   A,         STEP_LO
+018E 7002            143               JNZ   DEC_LO
+0190 1521            144               DEC   STEP_HI
+0192 1522            145     DEC_LO:   DEC   STEP_LO
+                     146     
+                     147               ; Advance phase index
+0194 E523            148               MOV   A,         DIR_SEL
+0196 600F            149               JZ    CW_ADV
+                     150     
+0198                 151     CCW_ADV:
+0198 E525            152               MOV   A,         SEQ_IDX
+019A 6004            153               JZ    CCW_WRAP
+019C 1525            154               DEC   SEQ_IDX
+019E 80D8            155               SJMP  RUN_MOTOR
+01A0                 156     CCW_WRAP:
+01A0 E526            157               MOV   A,         SEQ_LEN
+01A2 14              158               DEC   A
+01A3 F525            159               MOV   SEQ_IDX,   A
+01A5 80D1            160               SJMP  RUN_MOTOR
+                     161     
+01A7                 162     CW_ADV:
+01A7 0525            163               INC   SEQ_IDX
+01A9 E525            164               MOV   A,         SEQ_IDX
+01AB B526CA          165               CJNE  A,         SEQ_LEN, RUN_MOTOR
+01AE 752500          166               MOV   SEQ_IDX,   #00H
+01B1 80C5            167               SJMP  RUN_MOTOR
+                     168     
+                     169     ; SEND_ACK — de-energise coils, send 0x06, loop back
+01B3                 170     SEND_ACK:
+01B3 E5A0            171               MOV   A,         P2
+01B5 54F0            172               ANL   A,         #0F0H
+01B7 F5A0            173               MOV   P2,        A
+                     174     
+01B9 759906          175               MOV   SBUF,      #06H
+01BC 3099FD          176               JNB   TI,        $
+01BF C299            177               CLR   TI
+                     178     
+01C1 02012E          179               LJMP  WAIT_CMD
+                     180     
+                     181     ; DELAY_STEP — 4-level speed delay
+01C4                 182     DELAY_STEP:
+01C4 C082            183               PUSH  DPL
+01C6 C083            184               PUSH  DPH
+01C8 C0E0            185               PUSH  ACC
+                     186     
+01CA 900208          187               MOV   DPTR,      #DLYTABLO
+01CD E524            188               MOV   A,         SPEED_SEL
+01CF 93              189               MOVC  A,         @A+DPTR
+A51 MACRO ASSEMBLER  STEPMOTOR                                                            05/15/2026 16:20:54 PAGE     4
+
+01D0 FF              190               MOV   R7,        A
+                     191     
+01D1                 192     DLY_OUT:
+01D1 7EFF            193               MOV   R6,        #0FFH
+01D3                 194     DLY_IN:
+01D3 DEFE            195               DJNZ  R6,        DLY_IN
+01D5 DFFA            196               DJNZ  R7,        DLY_OUT
+                     197     
+01D7 D0E0            198               POP   ACC
+01D9 D083            199               POP   DPH
+01DB D082            200               POP   DPL
+01DD 22              201               RET
+                     202     
+                     203     ; -------------------------------------------------------
+                     204     ; UART_ISR — collect bytes into RX_BUF (28H..2CH)
+                     205     ; -------------------------------------------------------
+01DE                 206     UART_ISR:
+01DE 309814          207               JNB   RI,        TX_ISR
+01E1 C298            208               CLR   RI
+01E3 E599            209               MOV   A,         SBUF
+                     210     
+01E5 A827            211               MOV   R0,        RX_COUNT
+01E7 B80501          212               CJNE  R0,        #05H,    STORE_BYTE
+01EA 32              213               RETI
+                     214     
+01EB                 215     STORE_BYTE:
+01EB F9              216               MOV   R1,        A
+01EC E8              217               MOV   A,         R0
+01ED 2428            218               ADD   A,         #28H
+01EF F8              219               MOV   R0,        A
+01F0 E9              220               MOV   A,         R1
+01F1 F6              221               MOV   @R0,       A
+01F2 0527            222               INC   RX_COUNT
+01F4 32              223               RETI
+                     224     
+01F5                 225     TX_ISR:
+01F5 C299            226               CLR   TI
+01F7 32              227               RETI
+                     228     
+                     229     ; -------------------------------------------------------
+                     230     ; LOOK-UP TABLES
+                     231     ; -------------------------------------------------------
+01F8 08040201        232     WAVE_DRIVE:  DB   08H, 04H, 02H, 01H
+01FC 0C060309        233     TAM_ADIM:    DB   0CH, 06H, 03H, 09H
+0200 080C0406        234     YARIM_ADIM:  DB   08H, 0CH, 04H, 06H, 02H, 03H, 01H, 09H
+0204 02030109                
+0208 60301808        235     DLYTABLO:    DB   60H, 30H, 18H, 08H
+                     236     
+                     237               END
+A51 MACRO ASSEMBLER  STEPMOTOR                                                            05/15/2026 16:20:54 PAGE     5
+
+SYMBOL TABLE LISTING
+------ ----- -------
+
+
+N A M E             T Y P E  V A L U E   ATTRIBUTES
+
+ACC. . . . . . . .  D ADDR   00E0H   A   
+CCW_ADV. . . . . .  C ADDR   0198H   A   
+CCW_WRAP . . . . .  C ADDR   01A0H   A   
+CHK_FULL . . . . .  C ADDR   0159H   A   
+CW_ADV . . . . . .  C ADDR   01A7H   A   
+DEC_LO . . . . . .  C ADDR   0192H   A   
+DELAY_STEP . . . .  C ADDR   01C4H   A   
+DIR_SEL. . . . . .  D ADDR   0023H   A   
+DLYTABLO . . . . .  C ADDR   0208H   A   
+DLY_IN . . . . . .  C ADDR   01D3H   A   
+DLY_OUT. . . . . .  C ADDR   01D1H   A   
+DPH. . . . . . . .  D ADDR   0083H   A   
+DPL. . . . . . . .  D ADDR   0082H   A   
+IE . . . . . . . .  D ADDR   00A8H   A   
+INIT_IDX . . . . .  C ADDR   016AH   A   
+MAIN . . . . . . .  C ADDR   0100H   A   
+MODE_SEL . . . . .  D ADDR   0020H   A   
+P2 . . . . . . . .  D ADDR   00A0H   A   
+RI . . . . . . . .  B ADDR   0098H.0 A   
+RUN_MOTOR. . . . .  C ADDR   0178H   A   
+RX_COUNT . . . . .  D ADDR   0027H   A   
+SBUF . . . . . . .  D ADDR   0099H   A   
+SCON . . . . . . .  D ADDR   0098H   A   
+SEND_ACK . . . . .  C ADDR   01B3H   A   
+SEQ_IDX. . . . . .  D ADDR   0025H   A   
+SEQ_LEN. . . . . .  D ADDR   0026H   A   
+SP . . . . . . . .  D ADDR   0081H   A   
+SPEED_SEL. . . . .  D ADDR   0024H   A   
+START_CW . . . . .  C ADDR   0175H   A   
+STEP_HI. . . . . .  D ADDR   0021H   A   
+STEP_LO. . . . . .  D ADDR   0022H   A   
+STORE_BYTE . . . .  C ADDR   01EBH   A   
+T3CON. . . . . . .  D ADDR   009EH   A   
+T3FD . . . . . . .  D ADDR   009DH   A   
+TAM_ADIM . . . . .  C ADDR   01FCH   A   
+TI . . . . . . . .  B ADDR   0098H.1 A   
+TX_ISR . . . . . .  C ADDR   01F5H   A   
+UART_ISR . . . . .  C ADDR   01DEH   A   
+USE_HALF . . . . .  C ADDR   0164H   A   
+WAIT_CMD . . . . .  C ADDR   012EH   A   
+WAVE_DRIVE . . . .  C ADDR   01F8H   A   
+YARIM_ADIM . . . .  C ADDR   0200H   A   
+
+
+REGISTER BANK(S) USED: 0 
+
+
+ASSEMBLY COMPLETE.  0 WARNING(S), 0 ERROR(S)

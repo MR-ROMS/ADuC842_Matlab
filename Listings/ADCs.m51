@@ -1,0 +1,91 @@
+BL51 BANKED LINKER/LOCATER V6.22.4.0                                                    03/01/2026  22:30:44  PAGE 1
+
+
+BL51 BANKED LINKER/LOCATER V6.22.4.0, INVOKED BY:
+C:\USERS\USER\APPDATA\LOCAL\KEIL_V5\C51\BIN\BL51.EXE .\Objects\adc.obj TO .\Objects\ADCs PRINT (.\Listings\ADCs.m51) RAM
+>> SIZE (256)
+
+
+INPUT MODULES INCLUDED:
+  .\Objects\adc.obj (ADC)
+
+
+LINK MAP OF MODULE:  .\Objects\ADCs (ADC)
+
+
+            TYPE    BASE      LENGTH    RELOCATION   SEGMENT NAME
+            -----------------------------------------------------
+
+            * * * * * * *   D A T A   M E M O R Y   * * * * * * *
+            REG     0000H     0008H     ABSOLUTE     "REG BANK 0"
+
+            * * * * * * *   C O D E   M E M O R Y   * * * * * * *
+            CODE    0000H     0139H     ABSOLUTE     
+
+
+
+SYMBOL TABLE OF MODULE:  .\Objects\ADCs (ADC)
+
+  VALUE           TYPE          NAME
+  ----------------------------------
+
+  -------         MODULE        ADC
+  N:00EFH         SYMBOL        ADCCON1
+  N:00D8H         SYMBOL        ADCCON2
+  N:00DAH         SYMBOL        ADCDATAH
+  N:00D9H         SYMBOL        ADCDATAL
+  N:00DFH         SYMBOL        ADCI
+  C:011EH         SYMBOL        AGAIN
+  C:012EH         SYMBOL        DELAY
+  C:012EH         SYMBOL        DLY0
+  C:0130H         SYMBOL        DLY1
+  N:00AEH         SYMBOL        EADC
+  B:00B0H.4       SYMBOL        LED
+  C:0100H         SYMBOL        MAIN
+  C:010FH         SYMBOL        OKU
+  D:00B0H         SYMBOL        P3
+  D:0099H         SYMBOL        SBUF
+  D:0098H         SYMBOL        SCON
+  N:00DCH         SYMBOL        SCONV
+  C:0126H         SYMBOL        SENDVAL
+  N:009EH         SYMBOL        T3CON
+  N:009DH         SYMBOL        T3FD
+  B:0098H.1       SYMBOL        TI
+  C:0000H         LINE#         15
+  C:0100H         LINE#         17
+  C:0103H         LINE#         18
+  C:0106H         LINE#         19
+  C:0109H         LINE#         20
+  C:010CH         LINE#         21
+  C:010FH         LINE#         23
+  C:0111H         LINE#         24
+BL51 BANKED LINKER/LOCATER V6.22.4.0                                                  03/01/2026  22:30:44  PAGE 2
+
+
+  C:0114H         LINE#         25
+  C:0116H         LINE#         26
+  C:0118H         LINE#         27
+  C:011AH         LINE#         28
+  C:011CH         LINE#         29
+  C:011EH         LINE#         32
+  C:0120H         LINE#         33
+  C:0122H         LINE#         34
+  C:0124H         LINE#         35
+  C:0126H         LINE#         38
+  C:0129H         LINE#         39
+  C:012BH         LINE#         40
+  C:012DH         LINE#         41
+  C:012EH         LINE#         43
+  C:0130H         LINE#         44
+  C:0132H         LINE#         45
+  C:0134H         LINE#         46
+  C:0136H         LINE#         47
+  C:0138H         LINE#         48
+  -------         ENDMOD        ADC
+
+******************************************************************************
+* RESTRICTED VERSION WITH 0800H BYTE CODE SIZE LIMIT; USED: 003BH BYTE ( 2%) *
+******************************************************************************
+
+Program Size: data=8.0 xdata=0 code=313
+LINK/LOCATE RUN COMPLETE.  0 WARNING(S),  0 ERROR(S)

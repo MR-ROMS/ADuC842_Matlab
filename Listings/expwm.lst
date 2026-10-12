@@ -1,0 +1,110 @@
+A51 MACRO ASSEMBLER  EXPWM                                                                04/05/2026 13:04:45 PAGE     1
+
+
+MACRO ASSEMBLER A51 V8.2.7.0
+OBJECT MODULE PLACED IN .\Objects\expwm.obj
+ASSEMBLER INVOKED BY: C:\Users\User\AppData\Local\Keil_v5\C51\BIN\A51.EXE expwm.a51 SET(SMALL) DEBUG PRINT(.\Listings\ex
+                      pwm.lst) OBJECT(.\Objects\expwm.obj) EP
+
+LOC  OBJ            LINE     SOURCE
+
+                       1     $mod51 
+                       2     
+  00B1                 3     PWM0L  EQU 0xB1;
+  00B2                 4     PWM0H  EQU 0xB2;
+  00B3                 5     PWM1L  EQU 0xB3;
+  00B4                 6     PWM1H  EQU 0xB4;
+  00AE                 7     PWMCON EQU 0xAE;
+                       8     
+                       9     
+----                  10     CSEG
+                      11     
+0000                  12     ORG 000H
+                      13     
+                      14     ; Istediginiz acilarla ilgili R0 ve R1 degerleri olan kisimlari secip
+                      15     ; aktif edebilirsiniz.
+                      16     
+0000                  17     HERE:
+                      18     
+                      19     ;    MOV R0, #0A3H      ; %2 Servo 0 dereceye gider.
+                      20     ;    MOV R1, #01H       ; Her 11.64 us 1 dereceye denk geliyor.
+                      21     ;    LCALL PWM          ; 45 * 11.64 = 524 = 020C kadar ote
+                      22     
+                      23     ; JMP HERE
+                      24     
+                      25     ;    MOV R0, #0B0H      ; %4.5 Servo +45 dereceye gider. 01A3 + 020C = 03AF = 03B0
+                      26     ;    MOV R1, #03H       ; Her 11.64 us 1 dereceye denk geliyor.
+                      27     ;    LCALL PWM          ; 45 * 11.64 = 524 = 020C kadar ote
+                      28     
+                      29     ; JMP HERE
+                      30     
+                      31     ;    MOV R0, #0BCH      ; %7 Servo 90 dereceye gider. 03B0 + 020C = 05BC
+                      32     ;    MOV R1, #05H
+                      33     ;    LCALL PWM
+                      34     
+                      35     ; JMP HERE
+                      36     
+0000 78C8             37         MOV R0, #0C8H       ; %9.5 Servo 135 dereceye gider. 05BC + 020C = 07C8
+0002 7907             38         MOV R1, #07H
+0004 120009           39         LCALL PWM
+                      40     
+0007 80F7             41      JMP HERE
+                      42     
+                      43     ;    MOV R0, #0D5H       ; %12 Servo 180 dereceye gider. 07C8 + 020C = 09D4 = 09D5
+                      44     ;    MOV R1, #09H
+                      45     ;    LCALL PWM
+                      46     
+                      47     ;    JMP HERE
+                      48     
+0009                  49     PWM:
+0009 88B1             50         MOV PWM0L, R0
+000B 89B2             51         MOV PWM0H, R1
+000D 75B3EA           52         MOV PWM1L, #0EAH
+0010 75B451           53         MOV PWM1H, #51H
+0013 75AE1B           54         MOV PWMCON, #1BH
+0016 12001A           55         LCALL DELAY1
+                      56     
+0019 22               57         RET
+A51 MACRO ASSEMBLER  EXPWM                                                                04/05/2026 13:04:45 PAGE     2
+
+                      58             
+                      59             
+001A                  60             DELAY1:
+001A 7A32             61         MOV  R2, #50       
+001C                  62     OUTER:
+001C 79C8             63         MOV  R1, #200      
+001E                  64     INNER:
+001E 00               65         NOP                
+001F 00               66         NOP                
+0020 D9FC             67         DJNZ R1, INNER     ; inner loop: 200 × 4 cycles = 800 cycles
+0022 DAF8             68         DJNZ R2, OUTER     ; outer loop: 50 × 800 = 40,000 cycles
+0024 22               69         RET                ; 40,000 × 500ns = 20ms ?
+                      70             
+                      71     END
+                                     
+                                     
+                                     
+A51 MACRO ASSEMBLER  EXPWM                                                                04/05/2026 13:04:45 PAGE     3
+
+SYMBOL TABLE LISTING
+------ ----- -------
+
+
+N A M E             T Y P E  V A L U E   ATTRIBUTES
+
+DELAY1 . . . . . .  C ADDR   001AH   A   
+HERE . . . . . . .  C ADDR   0000H   A   
+INNER. . . . . . .  C ADDR   001EH   A   
+OUTER. . . . . . .  C ADDR   001CH   A   
+PWM. . . . . . . .  C ADDR   0009H   A   
+PWM0H. . . . . . .  N NUMB   00B2H   A   
+PWM0L. . . . . . .  N NUMB   00B1H   A   
+PWM1H. . . . . . .  N NUMB   00B4H   A   
+PWM1L. . . . . . .  N NUMB   00B3H   A   
+PWMCON . . . . . .  N NUMB   00AEH   A   
+
+
+REGISTER BANK(S) USED: 0 
+
+
+ASSEMBLY COMPLETE.  0 WARNING(S), 0 ERROR(S)

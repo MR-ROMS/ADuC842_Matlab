@@ -1,0 +1,124 @@
+A51 MACRO ASSEMBLER  SINUS                                                                03/16/2026 19:22:05 PAGE     1
+
+
+MACRO ASSEMBLER A51 V8.2.7.0
+OBJECT MODULE PLACED IN .\Objects\sinus.obj
+ASSEMBLER INVOKED BY: C:\Users\User\AppData\Local\Keil_v5\C51\BIN\A51.EXE sinus.a51 SET(SMALL) DEBUG PRINT(.\Listings\si
+                      nus.lst) OBJECT(.\Objects\sinus.obj) EP
+
+LOC  OBJ            LINE     SOURCE
+
+                       1     $mod51 
+                       2             ;6khz lik sinüs dalga üretimi DAC0 ile
+  00EF                 3             ADCCON1 EQU 0xEF;
+  00FD                 4             DACCON EQU 0xFD;
+                       5             ;EADC EQU 0xAE;
+  00F9                 6             DAC0L EQU 0xF9;
+  00FA                 7             DAC0H EQU 0xFA;
+                       8     
+                       9                     
+----                  10                     CSEG 
+0000                  11                     ORG 0000H
+                      12                             
+0000                  13             BASLA: 
+                      14                   
+0000 8580EF           15                             MOV ADCCON1, 80H;
+0003 75FD2D           16                             MOV DACCON, #2DH;
+                      17                             
+0006 758901           18                             MOV TMOD, #01H;
+0009 758800           19                             MOV TCON, #00H;
+000C 901000           20                             MOV DPTR, #TABLE;
+000F 7800             21                             MOV R0, #00H;
+                      22                             
+0011                  23             DACYAZ: 
+0011 E8               24                             MOV A,R0;
+0012 93               25                             MOVC A, @A+DPTR;
+0013 F9               26                             MOV R1, A;
+0014 08               27                             INC R0
+0015 E8               28                             MOV A, R0;
+0016 93               29                             MOVC A, @A+DPTR;
+0017 FA               30                             MOV R2,A;
+                      31                             
+0018 89FA             32                             MOV DAC0H, R1;
+001A 8AF9             33                             MOV DAC0L, R2;
+                      34                             
+001C C28D             35                             CLR TF0;
+001E 758CFF           36                             MOV TH0, #0FFH;
+0021 758AF7           37                             MOV TL0, #0F7H;
+0024 D28C             38                             SETB TR0;
+0026 308DFD           39                             JNB TF0, $
+                      40                                     
+0029 08               41                             INC R0;
+002A 53003F           42                             ANL 00H, #3FH             ;mask 64-1 so R0 & 0011 1111 --> reset at
+                              64= 0100 0000
+002D 80E2             43                     JMP DACYAZ
+                      44                             
+                      45                             
+                      46                             
+1000                  47                             ORG 1000H
+1000                  48                                     TABLE:
+1000 07FF             49                                             DB     007H, 0FFH    ; 2,5V       /1
+1002 098E             50                                             DB     009H, 08EH    ; 2,987V     /2
+1004 0B0E             51                                             DB     00BH, 00EH    ; 3,456V     /3
+1006 0C70             52                                             DB     00CH, 070H    ; 3,888V     /4
+1008 0DA6             53                                             DB     00DH, 0A6H    ; 4,267V     /5
+100A 0EA5             54                                             DB     00EH, 0A5H    ; 4,578V     /6
+100C 0F62             55                                             DB     00FH, 062H    ; 4,809V     /7
+100E 0FD6             56                                             DB     00FH, 0D6H    ; 4,951V     /8
+A51 MACRO ASSEMBLER  SINUS                                                                03/16/2026 19:22:05 PAGE     2
+
+1010 0FFF             57                                             DB     00FH, 0FFH    ; 5V         /9
+1012 0FD6             58                                             DB     00FH, 0D6H    ; 4,951V     /10
+1014 0F62             59                                             DB     00FH, 062H    ; 4,809V     /11
+1016 0EA5             60                                             DB     00EH, 0A5H    ; 4,578V     /12
+1018 0DA6             61                                             DB     00DH, 0A6H    ; 4,267V     /13
+101A 0C70             62                                             DB     00CH, 070H    ; 3,888V     /14
+101C 0B0E             63                                             DB     00BH, 00EH    ; 3,456V     /15
+101E 098E             64                                             DB     009H, 08EH    ; 2,987V     /16
+1020 07FF             65                                             DB     007H, 0FFH    ; 2,5V       /17
+1022 066F             66                                             DB     006H, 06FH    ; 2,012V     /18
+1024 04EF             67                                             DB     004H, 0EFH    ; 1,543V     /19
+1026 038D             68                                             DB     003H, 08DH    ; 1,111V     /20
+1028 0257             69                                             DB     002H, 057H    ; 0,732V     /21
+102A 0158             70                                             DB     001H, 058H    ; 0,421V     /22
+102C 009E             71                                             DB     000H, 09EH    ; 0,190V     /23
+102E 0027             72                                             DB     000H, 027H    ; 0,048V     /24
+1030 0000             73                                             DB     000H, 000H    ; 0V         /25
+1032 0027             74                                         DB     000H, 027H    ; 0,048V     /26
+1034 009E             75                                             DB     000H, 09EH    ; 0,190V     /27
+1036 0158             76                                             DB     001H, 058H    ; 0,421V     /28
+1038 0257             77                                             DB     002H, 057H    ; 0,732V     /29
+103A 038D             78                                             DB     003H, 08DH    ; 1,111V     /30
+103C 04EF             79                                             DB     004H, 0EFH    ; 1,543V     /31
+103E 068F             80                                             DB     006H, 08FH    ; 2,012V     /32
+                      81                             
+                      82                                                     
+                      83             END
+                                                     
+A51 MACRO ASSEMBLER  SINUS                                                                03/16/2026 19:22:05 PAGE     3
+
+SYMBOL TABLE LISTING
+------ ----- -------
+
+
+N A M E             T Y P E  V A L U E   ATTRIBUTES
+
+ADCCON1. . . . . .  N NUMB   00EFH   A   
+BASLA. . . . . . .  C ADDR   0000H   A   
+DAC0H. . . . . . .  N NUMB   00FAH   A   
+DAC0L. . . . . . .  N NUMB   00F9H   A   
+DACCON . . . . . .  N NUMB   00FDH   A   
+DACYAZ . . . . . .  C ADDR   0011H   A   
+TABLE. . . . . . .  C ADDR   1000H   A   
+TCON . . . . . . .  D ADDR   0088H   A   
+TF0. . . . . . . .  B ADDR   0088H.5 A   
+TH0. . . . . . . .  D ADDR   008CH   A   
+TL0. . . . . . . .  D ADDR   008AH   A   
+TMOD . . . . . . .  D ADDR   0089H   A   
+TR0. . . . . . . .  B ADDR   0088H.4 A   
+
+
+REGISTER BANK(S) USED: 0 
+
+
+ASSEMBLY COMPLETE.  0 WARNING(S), 0 ERROR(S)

@@ -1,0 +1,230 @@
+A51 MACRO ASSEMBLER  PCANEWSERVO                                                          06/23/2026 11:57:51 PAGE     1
+
+
+MACRO ASSEMBLER A51 V8.2.7.0
+OBJECT MODULE PLACED IN .\Objects\PCANEWSERVO.obj
+ASSEMBLER INVOKED BY: C:\Users\User\AppData\Local\Keil_v5\C51\BIN\A51.EXE PCANEWSERVO.a51 SET(SMALL) DEBUG PRINT(.\Listi
+                      ngs\PCANEWSERVO.lst) OBJECT(.\Objects\PCANEWSERVO.obj) EP
+
+LOC  OBJ            LINE     SOURCE
+
+                       1     $mod51 
+                       2     
+                       3     ; =========================================================================
+                       4     ; REGISTER VE DONANIMSAL I2C TANIMLAMALARI
+                       5     ; =========================================================================
+  00E8                 6     I2CCON DATA 0E8H   ; I2C Kontrol Registeri Adresi
+  00F8                 7     SPICON DATA 0F8H   ; SPI Kontrol Registeri Adresi
+                       8     
+                       9     ; --- I2CCON BITLERI (Ozel I2C Donanim Pinlerine Hukmeder) ---
+  00EF                10     MDO  BIT 0EFH  ; I2CCON.7 (SDATA Pinine Veri Yazar)
+  00ED                11     MCO  BIT 0EDH  ; I2CCON.5 (SCLOCK Pinine Saat Sinyali Yazar)
+                      12     
+  0080                13     PCA_ADDR EQU 80H  
+                      14     
+----                  15     CSEG
+0000                  16     ORG 0000H
+0000 805E             17         SJMP BASLA
+                      18     
+0060                  19     ORG 0060H
+0060                  20     BASLA:
+                      21         ; 1. ADIM: Donanimsal I2C Pinlerini (J0) Uyandir!
+0060 75F800           22         MOV SPICON, #00H   ; SPI pinlerini kapat ki I2C ile cakismasin
+                      23         ; I2CM=1 (Master), MDE=1 (Cikis Aktif), MDO=1 (SDA High), MCO=1 (SCL High)
+0063 75E8E8           24         MOV I2CCON, #0E8H  
+                      25         
+                      26         ; 2. ADIM: PCA9685'i Hazirla ve 50Hz'e Ayarla
+0066 120077           27         LCALL PCA_KURULUM
+                      28     
+0069                  29     SONSUZ_DONGU:
+                      30         ; 1. Sifir Dereceye Git ve Bekle
+0069 1200C0           31         LCALL SERVO_0_SIFIR_DERECE
+006C 12013B           32         LCALL UZUN_GECIKME
+                      33     
+                      34         ; 2. Yuz Seksen Dereceye Git ve Bekle
+006F 1200E5           35         LCALL SERVO_0_YUZSEKSEN_DERECE
+0072 12013B           36         LCALL UZUN_GECIKME
+                      37     
+                      38         ; Basa don ve surekli tekrarla
+0075 80F2             39         SJMP SONSUZ_DONGU  
+                      40     
+                      41     ; =========================================================================
+                      42     ; PCA9685 ILK KURULUM (INIT) ALT PROGRAMI
+                      43     ; =========================================================================
+0077                  44     PCA_KURULUM:
+                      45         ; Cipi Sleep moduna al
+0077 12010A           46         LCALL I2C_START
+007A 7480             47         MOV A, #PCA_ADDR
+007C 12011E           48         LCALL I2C_YAZ
+007F 7400             49         MOV A, #00H       
+0081 12011E           50         LCALL I2C_YAZ
+0084 7410             51         MOV A, #10H       
+0086 12011E           52         LCALL I2C_YAZ
+0089 120115           53         LCALL I2C_STOP
+008C 120136           54         LCALL KISA_GECIKME
+                      55     
+                      56         ; Prescaler'i 50 Hz ayarla (Hex: 79H)
+008F 12010A           57         LCALL I2C_START
+A51 MACRO ASSEMBLER  PCANEWSERVO                                                          06/23/2026 11:57:51 PAGE     2
+
+0092 7480             58         MOV A, #PCA_ADDR
+0094 12011E           59         LCALL I2C_YAZ
+0097 74FE             60         MOV A, #0FEH      
+0099 12011E           61         LCALL I2C_YAZ
+009C 7479             62         MOV A, #79H       
+009E 12011E           63         LCALL I2C_YAZ
+00A1 120115           64         LCALL I2C_STOP
+00A4 120136           65         LCALL KISA_GECIKME
+                      66     
+                      67         ; Sleep'ten cik, Auto-Increment ac
+00A7 12010A           68         LCALL I2C_START
+00AA 7480             69         MOV A, #PCA_ADDR
+00AC 12011E           70         LCALL I2C_YAZ
+00AF 7400             71         MOV A, #00H       
+00B1 12011E           72         LCALL I2C_YAZ
+00B4 74A1             73         MOV A, #0A1H      
+00B6 12011E           74         LCALL I2C_YAZ
+00B9 120115           75         LCALL I2C_STOP
+00BC 120136           76         LCALL KISA_GECIKME
+00BF 22               77         RET
+                      78     
+                      79     ; =========================================================================
+                      80     ; SERVO HAREKET ALT PROGRAMLARI
+                      81     ; =========================================================================
+00C0                  82     SERVO_0_SIFIR_DERECE:
+                      83         ; 1ms pulse elde etmek icin -> Hex: 00CCH (Yaklasik 204)
+00C0 12010A           84         LCALL I2C_START
+00C3 7480             85         MOV A, #PCA_ADDR
+00C5 12011E           86         LCALL I2C_YAZ
+00C8 7406             87         MOV A, #06H       ; Kanal 0 baslangic adresi
+00CA 12011E           88         LCALL I2C_YAZ
+                      89     
+00CD 7400             90         MOV A, #00H       ; LED0_ON_L 
+00CF 12011E           91         LCALL I2C_YAZ
+00D2 7400             92         MOV A, #00H       ; LED0_ON_H 
+00D4 12011E           93         LCALL I2C_YAZ
+00D7 7459             94         MOV A, #059H      ; LED0_OFF_L 
+00D9 12011E           95         LCALL I2C_YAZ
+00DC 7400             96         MOV A, #00H       ; LED0_OFF_H 
+00DE 12011E           97         LCALL I2C_YAZ
+                      98         
+00E1 120115           99         LCALL I2C_STOP
+00E4 22              100         RET
+                     101     
+00E5                 102     SERVO_0_YUZSEKSEN_DERECE:
+                     103         ; 2ms pulse elde etmek icin -> Hex: 0199H (Yaklasik 409)
+00E5 12010A          104         LCALL I2C_START
+00E8 7480            105         MOV A, #PCA_ADDR
+00EA 12011E          106         LCALL I2C_YAZ
+00ED 7406            107         MOV A, #06H       ; Kanal 0 baslangic adresi
+00EF 12011E          108         LCALL I2C_YAZ
+                     109     
+00F2 7400            110         MOV A, #00H       ; LED0_ON_L 
+00F4 12011E          111         LCALL I2C_YAZ
+00F7 7400            112         MOV A, #00H       ; LED0_ON_H 
+00F9 12011E          113         LCALL I2C_YAZ
+00FC 7400            114         MOV A, #000H       ; LED0_OFF_L 
+00FE 12011E          115         LCALL I2C_YAZ
+0101 7401            116         MOV A, #01H       ; LED0_OFF_H 
+0103 12011E          117         LCALL I2C_YAZ
+                     118         
+0106 120115          119         LCALL I2C_STOP
+0109 22              120         RET
+                     121     
+                     122     ; =========================================================================
+                     123     ; DONANIMSAL I2C (I2CCON UZERINDEN) YONLENDIRME PROTOKOLU
+A51 MACRO ASSEMBLER  PCANEWSERVO                                                          06/23/2026 11:57:51 PAGE     3
+
+                     124     ; =========================================================================
+010A                 125     I2C_START:
+010A D2EF            126         SETB MDO
+010C D2ED            127         SETB MCO
+010E 00              128         NOP         ; Cipin hiza yetismesi icin nefes alma payi
+010F C2EF            129         CLR MDO
+0111 00              130         NOP
+0112 C2ED            131         CLR MCO
+0114 22              132         RET
+                     133     
+0115                 134     I2C_STOP:
+0115 C2EF            135         CLR MDO
+0117 00              136         NOP
+0118 D2ED            137         SETB MCO
+011A 00              138         NOP
+011B D2EF            139         SETB MDO
+011D 22              140         RET
+                     141     
+011E                 142     I2C_YAZ:
+011E 7F08            143         MOV R7, #8        
+0120                 144     I2C_DONGU:
+0120 33              145         RLC A             
+0121 92EF            146         MOV MDO, C  ; A'nin en ust bitini Donanimsal SDA pinine (MDO) aktar      
+0123 00              147         NOP
+0124 D2ED            148         SETB MCO    ; Donanimsal SCL pinini (MCO) High yap
+0126 00              149         NOP
+0127 00              150         NOP          
+0128 C2ED            151         CLR MCO     ; SCL pinini Low yap
+012A DFF4            152         DJNZ R7, I2C_DONGU
+                     153         
+                     154         ; ACK (Onay) Okuma Boslugu
+012C D2EF            155         SETB MDO
+012E 00              156         NOP          
+012F D2ED            157         SETB MCO
+0131 00              158         NOP
+0132 00              159         NOP          
+0133 C2ED            160         CLR MCO           
+0135 22              161         RET
+                     162     
+                     163     ; =========================================================================
+                     164     ; GECIKME ALT PROGRAMLARI
+                     165     ; =========================================================================
+                     166     ; Cipin uyanmasi ve osilatorun oturmasi icin minik bir gecikme
+0136                 167     KISA_GECIKME:
+0136 7EFF            168         MOV R6, #255
+0138 DEFE            169     G1: DJNZ R6, G1
+013A 22              170         RET
+                     171     
+                     172     ; Motorun bir uctan digerine gitmesi icin gereken zamani taniyan gecikme
+013B                 173     UZUN_GECIKME:
+013B 7D0A            174         MOV R5, #10
+013D 7EFF            175     U1: MOV R6, #255
+013F 7FFF            176     U2: MOV R7, #255
+0141 DFFE            177     U3: DJNZ R7, U3
+0143 DEFA            178         DJNZ R6, U2
+0145 DDF6            179         DJNZ R5, U1
+0147 22              180         RET
+                     181     
+                     182     END
+A51 MACRO ASSEMBLER  PCANEWSERVO                                                          06/23/2026 11:57:51 PAGE     4
+
+SYMBOL TABLE LISTING
+------ ----- -------
+
+
+N A M E                   T Y P E  V A L U E   ATTRIBUTES
+
+BASLA. . . . . . . . . .  C ADDR   0060H   A   
+G1 . . . . . . . . . . .  C ADDR   0138H   A   
+I2CCON . . . . . . . . .  D ADDR   00E8H   A   
+I2C_DONGU. . . . . . . .  C ADDR   0120H   A   
+I2C_START. . . . . . . .  C ADDR   010AH   A   
+I2C_STOP . . . . . . . .  C ADDR   0115H   A   
+I2C_YAZ. . . . . . . . .  C ADDR   011EH   A   
+KISA_GECIKME . . . . . .  C ADDR   0136H   A   
+MCO. . . . . . . . . . .  B ADDR   00E8H.5 A   
+MDO. . . . . . . . . . .  B ADDR   00E8H.7 A   
+PCA_ADDR . . . . . . . .  N NUMB   0080H   A   
+PCA_KURULUM. . . . . . .  C ADDR   0077H   A   
+SERVO_0_SIFIR_DERECE . .  C ADDR   00C0H   A   
+SERVO_0_YUZSEKSEN_DERECE  C ADDR   00E5H   A   
+SONSUZ_DONGU . . . . . .  C ADDR   0069H   A   
+SPICON . . . . . . . . .  D ADDR   00F8H   A   
+U1 . . . . . . . . . . .  C ADDR   013DH   A   
+U2 . . . . . . . . . . .  C ADDR   013FH   A   
+U3 . . . . . . . . . . .  C ADDR   0141H   A   
+UZUN_GECIKME . . . . . .  C ADDR   013BH   A   
+
+
+REGISTER BANK(S) USED: 0 
+
+
+ASSEMBLY COMPLETE.  0 WARNING(S), 0 ERROR(S)

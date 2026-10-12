@@ -1,0 +1,60 @@
+A51 MACRO ASSEMBLER  TESTDC                                                               05/06/2026 23:51:30 PAGE     1
+
+
+MACRO ASSEMBLER A51 V8.2.7.0
+OBJECT MODULE PLACED IN .\Objects\testdc.obj
+ASSEMBLER INVOKED BY: C:\Users\User\AppData\Local\Keil_v5\C51\BIN\A51.EXE testdc.a51 SET(SMALL) DEBUG PRINT(.\Listings\t
+                      estdc.lst) OBJECT(.\Objects\testdc.obj) EP
+
+LOC  OBJ            LINE     SOURCE
+
+                       1     $mod51 
+                       2     
+  00DC                 3     SCONV    EQU 0DCH
+  00DF                 4     ADCI     EQU 0DFH
+  00EF                 5     ADCCON1  EQU 0EFH
+  00D8                 6     ADCCON2  EQU 0D8H
+  00D9                 7     ADCDATAL EQU 0D9H
+  00DA                 8     ADCDATAH EQU 0DAH
+                       9     
+----                  10     CSEG
+0000                  11         ORG 0000H
+0000 2100             12         JMP MAIN
+                      13     
+0100                  14         ORG 0100H
+                      15     
+                      16     
+                      17     
+0100                  18     MAIN:
+                      19         ; Reverse
+0100 D2A0             20         SETB P2.0
+0102 C2A1             21         CLR P2.1
+                      22     
+0104 D2A3             23         SETB P2.3
+0106 D2A2             24         SETB P2.2
+                      25     
+0108 80FE             26         SJMP $
+                      27     
+                      28     END
+A51 MACRO ASSEMBLER  TESTDC                                                               05/06/2026 23:51:30 PAGE     2
+
+SYMBOL TABLE LISTING
+------ ----- -------
+
+
+N A M E             T Y P E  V A L U E   ATTRIBUTES
+
+ADCCON1. . . . . .  N NUMB   00EFH   A   
+ADCCON2. . . . . .  N NUMB   00D8H   A   
+ADCDATAH . . . . .  N NUMB   00DAH   A   
+ADCDATAL . . . . .  N NUMB   00D9H   A   
+ADCI . . . . . . .  N NUMB   00DFH   A   
+MAIN . . . . . . .  C ADDR   0100H   A   
+P2 . . . . . . . .  D ADDR   00A0H   A   
+SCONV. . . . . . .  N NUMB   00DCH   A   
+
+
+REGISTER BANK(S) USED: 0 
+
+
+ASSEMBLY COMPLETE.  0 WARNING(S), 0 ERROR(S)

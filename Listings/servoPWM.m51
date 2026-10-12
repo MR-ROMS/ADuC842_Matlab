@@ -1,0 +1,83 @@
+BL51 BANKED LINKER/LOCATER V6.22.4.0                                                    06/20/2026  15:07:55  PAGE 1
+
+
+BL51 BANKED LINKER/LOCATER V6.22.4.0, INVOKED BY:
+C:\USERS\USER\APPDATA\LOCAL\KEIL_V5\C51\BIN\BL51.EXE .\Objects\servopwm.obj TO .\Objects\servoPWM PRINT (.\Listings\serv
+>> oPWM.m51) RAMSIZE (256)
+
+
+INPUT MODULES INCLUDED:
+  .\Objects\servopwm.obj (SERVOPWM)
+
+
+LINK MAP OF MODULE:  .\Objects\servoPWM (SERVOPWM)
+
+
+            TYPE    BASE      LENGTH    RELOCATION   SEGMENT NAME
+            -----------------------------------------------------
+
+            * * * * * * *   D A T A   M E M O R Y   * * * * * * *
+            REG     0000H     0008H     ABSOLUTE     "REG BANK 0"
+
+            * * * * * * *   C O D E   M E M O R Y   * * * * * * *
+            CODE    0000H     104AH     ABSOLUTE     
+
+
+
+SYMBOL TABLE OF MODULE:  .\Objects\servoPWM (SERVOPWM)
+
+  VALUE           TYPE          NAME
+  ----------------------------------
+
+  -------         MODULE        SERVOPWM
+  C:0005H         SYMBOL        BACK
+  C:0023H         SYMBOL        DELAY1
+  C:0025H         SYMBOL        DLY01
+  C:0027H         SYMBOL        DLY02
+  C:0000H         SYMBOL        MAIN
+  N:00B2H         SYMBOL        PWM0H
+  N:00B1H         SYMBOL        PWM0L
+  N:00B4H         SYMBOL        PWM1H
+  N:00B3H         SYMBOL        PWM1L
+  N:00AEH         SYMBOL        PWMCON
+  C:1000H         SYMBOL        PWMDATA
+  C:0000H         LINE#         15
+  C:0003H         LINE#         16
+  C:0005H         LINE#         20
+  C:0006H         LINE#         21
+  C:0007H         LINE#         22
+  C:0009H         LINE#         25
+  C:000AH         LINE#         26
+  C:000BH         LINE#         27
+  C:000CH         LINE#         28
+  C:000EH         LINE#         31
+  C:0011H         LINE#         32
+  C:0014H         LINE#         33
+  C:0017H         LINE#         35
+  C:001AH         LINE#         36
+  C:001BH         LINE#         39
+  C:001CH         LINE#         40
+  C:001FH         LINE#         42
+  C:0021H         LINE#         43
+BL51 BANKED LINKER/LOCATER V6.22.4.0                                                  06/20/2026  15:07:55  PAGE 2
+
+
+  C:0023H         LINE#         46
+  C:0025H         LINE#         47
+  C:0027H         LINE#         48
+  C:0029H         LINE#         49
+  C:002AH         LINE#         50
+  C:002BH         LINE#         51
+  C:002DH         LINE#         52
+  C:002FH         LINE#         53
+  C:0031H         LINE#         54
+  C:0034H         LINE#         55
+  C:0035H         LINE#         62
+  -------         ENDMOD        SERVOPWM
+
+******************************************************************************
+* RESTRICTED VERSION WITH 0800H BYTE CODE SIZE LIMIT; USED: 0080H BYTE ( 6%) *
+******************************************************************************
+
+Program Size: data=8.0 xdata=0 code=4170
+LINK/LOCATE RUN COMPLETE.  0 WARNING(S),  0 ERROR(S)

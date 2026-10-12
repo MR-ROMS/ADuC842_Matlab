@@ -1,0 +1,208 @@
+A51 MACRO ASSEMBLER  TRIAL                                                                06/22/2026 20:23:21 PAGE     1
+
+
+MACRO ASSEMBLER A51 V8.2.7.0
+OBJECT MODULE PLACED IN .\Objects\trial.obj
+ASSEMBLER INVOKED BY: C:\Users\User\AppData\Local\Keil_v5\C51\BIN\A51.EXE trial.a51 SET(SMALL) DEBUG PRINT(.\Listings\tr
+                      ial.lst) OBJECT(.\Objects\trial.obj) EP
+
+LOC  OBJ            LINE     SOURCE
+
+                       1     $mod51 
+                       2     
+                       3     ; =========================================================================
+                       4     ; MINIMAL WORKING TEST - NO UART, JUST MOVE SERVO
+                       5     ; =========================================================================
+                       6     
+  00A0                 7     SDA BIT P2.0
+  00A1                 8     SCL BIT P2.1
+                       9     
+  0080                10     PCA_ADDR EQU 80H  
+                      11     
+----                  12     CSEG
+0000                  13     ORG 0000H
+0000 805E             14         SJMP BASLA
+                      15     
+0060                  16     ORG 0060H
+0060                  17     BASLA:
+0060 75817F           18         MOV SP,#7FH
+0063 12006E           19         LCALL PCA_KURULUM
+                      20     
+0066                  21     SONSUZ_DONGU:
+0066 1200B7           22         LCALL SERVO_0_DOKSAN_DERECE
+0069 120129           23         LCALL UZUN_GECIKME
+006C 80F8             24         SJMP SONSUZ_DONGU  
+                      25     
+006E                  26     PCA_KURULUM:
+006E 1200DC           27         LCALL I2C_START
+0071 7480             28         MOV A, #PCA_ADDR
+0073 1200FC           29         LCALL I2C_YAZ
+0076 7400             30         MOV A, #00H        
+0078 1200FC           31         LCALL I2C_YAZ
+007B 7421             32         MOV A, #21H        
+007D 1200FC           33         LCALL I2C_YAZ
+0080 1200ED           34         LCALL I2C_STOP
+0083 120124           35         LCALL KISA_GECIKME
+                      36     
+0086 1200DC           37         LCALL I2C_START
+0089 7480             38         MOV A, #PCA_ADDR
+008B 1200FC           39         LCALL I2C_YAZ
+008E 74FE             40         MOV A, #0FEH      
+0090 1200FC           41         LCALL I2C_YAZ
+0093 7479             42         MOV A, #79H        
+0095 1200FC           43         LCALL I2C_YAZ
+0098 1200ED           44         LCALL I2C_STOP
+009B 120124           45         LCALL KISA_GECIKME
+                      46     
+009E 1200DC           47         LCALL I2C_START
+00A1 7480             48         MOV A, #PCA_ADDR
+00A3 1200FC           49         LCALL I2C_YAZ
+00A6 7400             50         MOV A, #00H        
+00A8 1200FC           51         LCALL I2C_YAZ
+00AB 7421             52         MOV A, #21H        
+00AD 1200FC           53         LCALL I2C_YAZ
+00B0 1200ED           54         LCALL I2C_STOP
+00B3 120129           55         LCALL UZUN_GECIKME 
+00B6 22               56         RET
+                      57     
+A51 MACRO ASSEMBLER  TRIAL                                                                06/22/2026 20:23:21 PAGE     2
+
+00B7                  58     SERVO_0_DOKSAN_DERECE:
+00B7 1200DC           59         LCALL I2C_START
+00BA 7480             60         MOV A, #PCA_ADDR
+00BC 1200FC           61         LCALL I2C_YAZ
+00BF 7406             62         MOV A, #06H        
+00C1 1200FC           63         LCALL I2C_YAZ
+00C4 7400             64         MOV A, #00H        
+00C6 1200FC           65         LCALL I2C_YAZ
+00C9 7400             66         MOV A, #00H        
+00CB 1200FC           67         LCALL I2C_YAZ
+00CE 749A             68         MOV A, #9AH       
+00D0 1200FC           69         LCALL I2C_YAZ
+00D3 7401             70         MOV A, #01H       
+00D5 1200FC           71         LCALL I2C_YAZ
+00D8 1200ED           72         LCALL I2C_STOP
+00DB 22               73         RET
+                      74     
+                      75     ; =========================================================================
+                      76     ; I2C ROUTINES
+                      77     ; =========================================================================
+00DC                  78     I2C_START:
+00DC D2A0             79         SETB SDA
+00DE D2A1             80         SETB SCL
+00E0 7F0A             81         MOV R7, #10
+00E2                  82     I2C_START_DELAY1:
+00E2 DFFE             83         DJNZ R7, I2C_START_DELAY1
+00E4 C2A0             84         CLR SDA
+00E6 7F0A             85         MOV R7, #10
+00E8                  86     I2C_START_DELAY2:
+00E8 DFFE             87         DJNZ R7, I2C_START_DELAY2
+00EA C2A1             88         CLR SCL
+00EC 22               89         RET
+                      90     
+00ED                  91     I2C_STOP:
+00ED C2A0             92         CLR SDA
+00EF 7F0A             93         MOV R7, #10
+00F1                  94     I2C_STOP_DELAY1:
+00F1 DFFE             95         DJNZ R7, I2C_STOP_DELAY1
+00F3 D2A1             96         SETB SCL
+00F5 7F0A             97         MOV R7, #10
+00F7                  98     I2C_STOP_DELAY2:
+00F7 DFFE             99         DJNZ R7, I2C_STOP_DELAY2
+00F9 D2A0            100         SETB SDA
+00FB 22              101         RET
+                     102     
+00FC                 103     I2C_YAZ:
+00FC 7F08            104         MOV R7, #8        
+00FE                 105     I2C_DONGU:
+00FE 33              106         RLC A             
+00FF 4004            107         JC YAZ_BIR
+0101 C2A0            108         CLR SDA
+0103 8002            109         SJMP CLK_PULSE
+0105                 110     YAZ_BIR:
+0105 D2A0            111         SETB SDA
+0107                 112     CLK_PULSE:
+0107 00              113         NOP
+0108 00              114         NOP
+0109 D2A1            115         SETB SCL    
+010B 7E05            116         MOV R6, #5
+010D                 117     I2C_CLK_HIGH:
+010D DEFE            118         DJNZ R6, I2C_CLK_HIGH
+010F C2A1            119         CLR SCL     
+0111 7E05            120         MOV R6, #5
+0113                 121     I2C_CLK_LOW:
+0113 DEFE            122         DJNZ R6, I2C_CLK_LOW
+0115 DFE7            123         DJNZ R7, I2C_DONGU
+A51 MACRO ASSEMBLER  TRIAL                                                                06/22/2026 20:23:21 PAGE     3
+
+                     124         
+0117 D2A0            125         SETB SDA
+0119 00              126         NOP         
+011A 00              127         NOP
+011B D2A1            128         SETB SCL
+011D 7E05            129         MOV R6, #5
+011F                 130     I2C_ACK_HIGH:
+011F DEFE            131         DJNZ R6, I2C_ACK_HIGH
+0121 C2A1            132         CLR SCL
+0123 22              133         RET
+                     134     
+                     135     ; =========================================================================
+                     136     ; DELAYS
+                     137     ; =========================================================================
+0124                 138     KISA_GECIKME:
+0124 7EFF            139         MOV R6, #255
+0126 DEFE            140     G1: DJNZ R6, G1
+0128 22              141         RET
+                     142     
+0129                 143     UZUN_GECIKME:
+0129 7D64            144         MOV R5, #100    
+012B 7EFF            145     U1: MOV R6, #255
+012D 7FFF            146     U2: MOV R7, #255
+012F DFFE            147     U3: DJNZ R7, U3
+0131 DEFA            148         DJNZ R6, U2
+0133 DDF6            149         DJNZ R5, U1
+0135 22              150         RET
+                     151     
+                     152     END
+A51 MACRO ASSEMBLER  TRIAL                                                                06/22/2026 20:23:21 PAGE     4
+
+SYMBOL TABLE LISTING
+------ ----- -------
+
+
+N A M E                T Y P E  V A L U E   ATTRIBUTES
+
+BASLA . . . . . . . .  C ADDR   0060H   A   
+CLK_PULSE . . . . . .  C ADDR   0107H   A   
+G1. . . . . . . . . .  C ADDR   0126H   A   
+I2C_ACK_HIGH. . . . .  C ADDR   011FH   A   
+I2C_CLK_HIGH. . . . .  C ADDR   010DH   A   
+I2C_CLK_LOW . . . . .  C ADDR   0113H   A   
+I2C_DONGU . . . . . .  C ADDR   00FEH   A   
+I2C_START . . . . . .  C ADDR   00DCH   A   
+I2C_START_DELAY1. . .  C ADDR   00E2H   A   
+I2C_START_DELAY2. . .  C ADDR   00E8H   A   
+I2C_STOP. . . . . . .  C ADDR   00EDH   A   
+I2C_STOP_DELAY1 . . .  C ADDR   00F1H   A   
+I2C_STOP_DELAY2 . . .  C ADDR   00F7H   A   
+I2C_YAZ . . . . . . .  C ADDR   00FCH   A   
+KISA_GECIKME. . . . .  C ADDR   0124H   A   
+P2. . . . . . . . . .  D ADDR   00A0H   A   
+PCA_ADDR. . . . . . .  N NUMB   0080H   A   
+PCA_KURULUM . . . . .  C ADDR   006EH   A   
+SCL . . . . . . . . .  B ADDR   00A0H.1 A   
+SDA . . . . . . . . .  B ADDR   00A0H.0 A   
+SERVO_0_DOKSAN_DERECE  C ADDR   00B7H   A   
+SONSUZ_DONGU. . . . .  C ADDR   0066H   A   
+SP. . . . . . . . . .  D ADDR   0081H   A   
+U1. . . . . . . . . .  C ADDR   012BH   A   
+U2. . . . . . . . . .  C ADDR   012DH   A   
+U3. . . . . . . . . .  C ADDR   012FH   A   
+UZUN_GECIKME. . . . .  C ADDR   0129H   A   
+YAZ_BIR . . . . . . .  C ADDR   0105H   A   
+
+
+REGISTER BANK(S) USED: 0 
+
+
+ASSEMBLY COMPLETE.  0 WARNING(S), 0 ERROR(S)

@@ -1,0 +1,364 @@
+A51 MACRO ASSEMBLER  ROBOTKOL                                                             06/23/2026 18:10:45 PAGE     1
+
+
+MACRO ASSEMBLER A51 V8.2.7.0
+OBJECT MODULE PLACED IN .\Objects\robotkol.obj
+ASSEMBLER INVOKED BY: C:\Users\User\AppData\Local\Keil_v5\C51\BIN\A51.EXE robotkol.a51 SET(SMALL) DEBUG PRINT(.\Listings
+                      \robotkol.lst) OBJECT(.\Objects\robotkol.obj) EP
+
+LOC  OBJ            LINE     SOURCE
+
+                       1     $mod51 
+                       2     
+                       3     ; =========================================================================
+                       4     ; REGISTER TANIMLAMALARI
+                       5     ; =========================================================================
+  00E8                 6     I2CCON  DATA 0E8H
+  00F8                 7     SPICON  DATA 0F8H
+  00EF                 8     MDO     BIT  0EFH
+  00ED                 9     MCO     BIT  0EDH
+                      10     
+  009E                11     T3CON   EQU 09EH
+  009D                12     T3FD    EQU 09DH
+  0080                13     PCA_ADDR EQU 80H
+                      14     
+                      15     ; =========================================================================
+                      16     ; DC KOMUT ASCII DEGERLERI
+                      17     ; =========================================================================
+  0046                18     CMD_F   EQU 46H   ; 'F'
+  0052                19     CMD_R   EQU 52H   ; 'R'
+  004C                20     CMD_L   EQU 4CH   ; 'L'
+  0047                21     CMD_G   EQU 47H   ; 'G'
+  0053                22     CMD_S   EQU 53H   ; 'S'
+                      23     
+  0040                24     DC_CMD  DATA 40H   
+                      25     
+----                  26     CSEG
+0000                  27     ORG 0000H
+0000 805E             28         SJMP BASLA
+                      29     
+0060                  30     ORG 0060H
+0060                  31     BASLA:
+0060 75817F           32         MOV SP, #7FH
+                      33     
+0063 75F800           34         MOV SPICON, #00H
+0066 75E8E8           35         MOV I2CCON, #0E8H
+                      36     
+0069 C2B2             37         CLR  P3.2
+006B C2B3             38         CLR  P3.3
+006D C2B6             39         CLR  P3.6
+006F C2B7             40         CLR  P3.7
+                      41     
+0071 754053           42         MOV DC_CMD, #CMD_S
+                      43     
+0074 1201A6           44         LCALL PCA_KURULUM
+                      45     
+0077 759D2D           46         MOV T3FD,  #02DH
+007A 759E83           47         MOV T3CON, #083H
+007D 759850           48         MOV SCON,  #50H
+                      49     
+                      50     ; =========================================================================
+                      51     ; ANA DONGU
+                      52     ; =========================================================================
+0080                  53     SONSUZ_DONGU:
+                      54     
+0080                  55     SENKRON_BEKLE:
+0080 3098FD           56         JNB RI, SENKRON_BEKLE
+0083 C298             57         CLR RI
+A51 MACRO ASSEMBLER  ROBOTKOL                                                             06/23/2026 18:10:45 PAGE     2
+
+0085 E599             58         MOV A, SBUF
+                      59     
+0087 B4FF03           60         CJNE A, #0FFH, CHK_DC_SYNC
+008A 0200E1           61         LJMP SERVO_PAKET_AL
+                      62     
+008D                  63     CHK_DC_SYNC:
+008D B4FEF0           64         CJNE A, #0FEH, SONSUZ_DONGU
+                      65     
+0090                  66     DC_CMD_BEKLE:
+0090 3098FD           67         JNB RI, DC_CMD_BEKLE
+0093 C298             68         CLR RI
+0095 E599             69         MOV A, SBUF
+0097 F540             70         MOV DC_CMD, A
+                      71     
+0099                  72     DC_VAL_BEKLE:
+0099 3098FD           73         JNB RI, DC_VAL_BEKLE
+009C C298             74         CLR RI
+009E E599             75         MOV A, SBUF        
+                      76     
+00A0 E540             77         MOV A, DC_CMD
+                      78     
+00A2 B4460A           79         CJNE A, #CMD_F, CHK_R
+00A5 D2B3             80         SETB P3.3
+00A7 C2B2             81         CLR  P3.2
+00A9 D2B7             82         SETB P3.7
+00AB C2B6             83         CLR  P3.6
+00AD 802F             84         SJMP DC_BITTI
+                      85     
+00AF                  86     CHK_R:
+00AF B4520A           87         CJNE A, #CMD_R, CHK_L
+00B2 C2B3             88         CLR  P3.3
+00B4 D2B2             89         SETB P3.2
+00B6 C2B7             90         CLR  P3.7
+00B8 D2B6             91         SETB P3.6
+00BA 8022             92         SJMP DC_BITTI
+                      93     
+00BC                  94     CHK_L:
+00BC B44C0A           95         CJNE A, #CMD_L, CHK_G
+00BF C2B3             96         CLR  P3.3
+00C1 D2B2             97         SETB P3.2
+00C3 D2B7             98         SETB P3.7
+00C5 C2B6             99         CLR  P3.6
+00C7 8015            100         SJMP DC_BITTI
+                     101     
+00C9                 102     CHK_G:
+00C9 B4470A          103         CJNE A, #CMD_G, CHK_S
+00CC D2B3            104         SETB P3.3
+00CE C2B2            105         CLR  P3.2
+00D0 C2B7            106         CLR  P3.7
+00D2 D2B6            107         SETB P3.6
+00D4 8008            108         SJMP DC_BITTI
+                     109     
+00D6                 110     CHK_S:
+00D6 C2B2            111         CLR  P3.2
+00D8 C2B3            112         CLR  P3.3
+00DA C2B6            113         CLR  P3.6
+00DC C2B7            114         CLR  P3.7
+                     115     
+00DE                 116     DC_BITTI:
+00DE 020080          117         LJMP SONSUZ_DONGU
+                     118     
+                     119     ; =========================================================================
+                     120     ; SERVO PAKETI OKUMA VE PCA9685'E YAZMA
+                     121     ; =========================================================================
+00E1                 122     SERVO_PAKET_AL:
+00E1 7830            123         MOV R0, #30H       
+A51 MACRO ASSEMBLER  ROBOTKOL                                                             06/23/2026 18:10:45 PAGE     3
+
+00E3 7F0A            124         MOV R7, #10        
+                     125     
+00E5                 126     VERI_ALMA_DONGUSU:
+00E5 3098FD          127         JNB RI, VERI_ALMA_DONGUSU
+00E8 C298            128         CLR RI
+00EA A699            129         MOV @R0, SBUF
+00EC 08              130         INC R0
+00ED DFF6            131         DJNZ R7, VERI_ALMA_DONGUSU
+                     132     
+                     133         ; 1. MOTOR (06H)
+00EF 1201EF          134         LCALL I2C_START
+00F2 7480            135         MOV A, #PCA_ADDR
+00F4 120203          136         LCALL I2C_YAZ
+00F7 7406            137         MOV A, #06H
+00F9 120203          138         LCALL I2C_YAZ
+00FC 7400            139         MOV A, #00H
+00FE 120203          140         LCALL I2C_YAZ
+0101 7400            141         MOV A, #00H
+0103 120203          142         LCALL I2C_YAZ
+0106 E531            143         MOV A, 31H         
+0108 120203          144         LCALL I2C_YAZ
+010B E530            145         MOV A, 30H         
+010D 120203          146         LCALL I2C_YAZ
+0110 1201FA          147         LCALL I2C_STOP     ; Etiket düzeltildi
+                     148     
+                     149         ; 2. MOTOR (0AH)
+0113 1201EF          150         LCALL I2C_START
+0116 7480            151         MOV A, #PCA_ADDR
+0118 120203          152         LCALL I2C_YAZ
+011B 740A            153         MOV A, #0AH
+011D 120203          154         LCALL I2C_YAZ
+0120 7400            155         MOV A, #00H
+0122 120203          156         LCALL I2C_YAZ
+0125 7400            157         MOV A, #00H
+0127 120203          158         LCALL I2C_YAZ
+012A E533            159         MOV A, 33H         
+012C 120203          160         LCALL I2C_YAZ
+012F E532            161         MOV A, 32H         
+0131 120203          162         LCALL I2C_YAZ
+0134 1201FA          163         LCALL I2C_STOP     ; Etiket düzeltildi
+                     164     
+                     165         ; 3. MOTOR (0EH)
+0137 1201EF          166         LCALL I2C_START
+013A 7480            167         MOV A, #PCA_ADDR
+013C 120203          168         LCALL I2C_YAZ
+013F 740E            169         MOV A, #0EH
+0141 120203          170         LCALL I2C_YAZ
+0144 7400            171         MOV A, #00H
+0146 120203          172         LCALL I2C_YAZ
+0149 7400            173         MOV A, #00H
+014B 120203          174         LCALL I2C_YAZ
+014E E535            175         MOV A, 35H         
+0150 120203          176         LCALL I2C_YAZ
+0153 E534            177         MOV A, 34H         
+0155 120203          178         LCALL I2C_YAZ
+0158 1201FA          179         LCALL I2C_STOP     ; Etiket düzeltildi
+                     180     
+                     181         ; 4. MOTOR (12H)
+015B 1201EF          182         LCALL I2C_START
+015E 7480            183         MOV A, #PCA_ADDR
+0160 120203          184         LCALL I2C_YAZ
+0163 7412            185         MOV A, #12H
+0165 120203          186         LCALL I2C_YAZ
+0168 7400            187         MOV A, #00H
+016A 120203          188         LCALL I2C_YAZ
+016D 7400            189         MOV A, #00H
+A51 MACRO ASSEMBLER  ROBOTKOL                                                             06/23/2026 18:10:45 PAGE     4
+
+016F 120203          190         LCALL I2C_YAZ
+0172 E537            191         MOV A, 37H         
+0174 120203          192         LCALL I2C_YAZ
+0177 E536            193         MOV A, 36H         
+0179 120203          194         LCALL I2C_YAZ
+017C 1201FA          195         LCALL I2C_STOP     ; Etiket düzeltildi
+                     196     
+                     197         ; 5. MOTOR (16H)
+017F 1201EF          198         LCALL I2C_START
+0182 7480            199         MOV A, #PCA_ADDR
+0184 120203          200         LCALL I2C_YAZ
+0187 7416            201         MOV A, #16H
+0189 120203          202         LCALL I2C_YAZ
+018C 7400            203         MOV A, #00H
+018E 120203          204         LCALL I2C_YAZ
+0191 7400            205         MOV A, #00H
+0193 120203          206         LCALL I2C_YAZ
+0196 E539            207         MOV A, 39H         
+0198 120203          208         LCALL I2C_YAZ
+019B E538            209         MOV A, 38H         
+019D 120203          210         LCALL I2C_YAZ
+01A0 1201FA          211         LCALL I2C_STOP     ; Etiket düzeltildi
+                     212     
+01A3 020080          213         LJMP SONSUZ_DONGU
+                     214     
+                     215     ; =========================================================================
+                     216     ; PCA9685 SÜRÜCÜ BASLATMA 
+                     217     ; =========================================================================
+01A6                 218     PCA_KURULUM:
+01A6 1201EF          219         LCALL I2C_START
+01A9 7480            220         MOV A, #PCA_ADDR
+01AB 120203          221         LCALL I2C_YAZ
+01AE 7400            222         MOV A, #00H
+01B0 120203          223         LCALL I2C_YAZ
+01B3 7410            224         MOV A, #10H        
+01B5 120203          225         LCALL I2C_YAZ
+01B8 1201FA          226         LCALL I2C_STOP     ; Etiket düzeltildi
+01BB 12021B          227         LCALL KISA_GECIKME
+                     228     
+01BE 1201EF          229         LCALL I2C_START
+01C1 7480            230         MOV A, #PCA_ADDR
+01C3 120203          231         LCALL I2C_YAZ
+01C6 74FE            232         MOV A, #0FEH       
+01C8 120203          233         LCALL I2C_YAZ
+01CB 7479            234         MOV A, #79H        
+01CD 120203          235         LCALL I2C_YAZ
+01D0 1201FA          236         LCALL I2C_STOP     ; Etiket düzeltildi
+01D3 12021B          237         LCALL KISA_GECIKME
+                     238     
+01D6 1201EF          239         LCALL I2C_START
+01D9 7480            240         MOV A, #PCA_ADDR
+01DB 120203          241         LCALL I2C_YAZ
+01DE 7400            242         MOV A, #00H
+01E0 120203          243         LCALL I2C_YAZ
+01E3 74A1            244         MOV A, #0A1H       
+01E5 120203          245         LCALL I2C_YAZ
+01E8 1201FA          246         LCALL I2C_STOP     ; Etiket düzeltildi
+01EB 12021B          247         LCALL KISA_GECIKME
+01EE 22              248         RET
+                     249     
+                     250     ; =========================================================================
+                     251     ; I2C SINYAL ALTYAPISI
+                     252     ; =========================================================================
+01EF                 253     I2C_START:
+01EF D2EF            254         SETB MDO
+01F1 D2ED            255         SETB MCO
+A51 MACRO ASSEMBLER  ROBOTKOL                                                             06/23/2026 18:10:45 PAGE     5
+
+01F3 00              256         NOP
+01F4 C2EF            257         CLR MDO
+01F6 00              258         NOP
+01F7 C2ED            259         CLR MCO
+01F9 22              260         RET
+                     261     
+01FA                 262     I2C_STOP:              ; Orijinal ada dönüldü
+01FA C2EF            263         CLR MDO
+01FC 00              264         NOP
+01FD D2ED            265         SETB MCO
+01FF 00              266         NOP
+0200 D2EF            267         SETB MDO
+0202 22              268         RET
+                     269     
+0203                 270     I2C_YAZ:
+0203 7F08            271         MOV R7, #8
+0205                 272     I2C_DONGU:
+0205 33              273         RLC A
+0206 92EF            274         MOV MDO, C
+0208 00              275         NOP
+0209 D2ED            276         SETB MCO
+020B 00              277         NOP
+020C 00              278         NOP
+020D C2ED            279         CLR MCO
+020F DFF4            280         DJNZ R7, I2C_DONGU
+0211 D2EF            281         SETB MDO
+0213 00              282         NOP
+0214 D2ED            283         SETB MCO
+0216 00              284         NOP
+0217 00              285         NOP
+0218 C2ED            286         CLR MCO
+021A 22              287         RET
+                     288     
+021B                 289     KISA_GECIKME:
+021B 7EFF            290         MOV R6, #255
+021D DEFE            291     G1: DJNZ R6, G1
+021F 22              292         RET
+                     293     
+                     294     END
+A51 MACRO ASSEMBLER  ROBOTKOL                                                             06/23/2026 18:10:45 PAGE     6
+
+SYMBOL TABLE LISTING
+------ ----- -------
+
+
+N A M E             T Y P E  V A L U E   ATTRIBUTES
+
+BASLA. . . . . . .  C ADDR   0060H   A   
+CHK_DC_SYNC. . . .  C ADDR   008DH   A   
+CHK_G. . . . . . .  C ADDR   00C9H   A   
+CHK_L. . . . . . .  C ADDR   00BCH   A   
+CHK_R. . . . . . .  C ADDR   00AFH   A   
+CHK_S. . . . . . .  C ADDR   00D6H   A   
+CMD_F. . . . . . .  N NUMB   0046H   A   
+CMD_G. . . . . . .  N NUMB   0047H   A   
+CMD_L. . . . . . .  N NUMB   004CH   A   
+CMD_R. . . . . . .  N NUMB   0052H   A   
+CMD_S. . . . . . .  N NUMB   0053H   A   
+DC_BITTI . . . . .  C ADDR   00DEH   A   
+DC_CMD . . . . . .  D ADDR   0040H   A   
+DC_CMD_BEKLE . . .  C ADDR   0090H   A   
+DC_VAL_BEKLE . . .  C ADDR   0099H   A   
+G1 . . . . . . . .  C ADDR   021DH   A   
+I2CCON . . . . . .  D ADDR   00E8H   A   
+I2C_DONGU. . . . .  C ADDR   0205H   A   
+I2C_START. . . . .  C ADDR   01EFH   A   
+I2C_STOP . . . . .  C ADDR   01FAH   A   
+I2C_YAZ. . . . . .  C ADDR   0203H   A   
+KISA_GECIKME . . .  C ADDR   021BH   A   
+MCO. . . . . . . .  B ADDR   00E8H.5 A   
+MDO. . . . . . . .  B ADDR   00E8H.7 A   
+P3 . . . . . . . .  D ADDR   00B0H   A   
+PCA_ADDR . . . . .  N NUMB   0080H   A   
+PCA_KURULUM. . . .  C ADDR   01A6H   A   
+RI . . . . . . . .  B ADDR   0098H.0 A   
+SBUF . . . . . . .  D ADDR   0099H   A   
+SCON . . . . . . .  D ADDR   0098H   A   
+SENKRON_BEKLE. . .  C ADDR   0080H   A   
+SERVO_PAKET_AL . .  C ADDR   00E1H   A   
+SONSUZ_DONGU . . .  C ADDR   0080H   A   
+SP . . . . . . . .  D ADDR   0081H   A   
+SPICON . . . . . .  D ADDR   00F8H   A   
+T3CON. . . . . . .  N NUMB   009EH   A   
+T3FD . . . . . . .  N NUMB   009DH   A   
+VERI_ALMA_DONGUSU.  C ADDR   00E5H   A   
+
+
+REGISTER BANK(S) USED: 0 
+
+
+ASSEMBLY COMPLETE.  0 WARNING(S), 0 ERROR(S)

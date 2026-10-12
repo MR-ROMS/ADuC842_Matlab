@@ -1,0 +1,79 @@
+A51 MACRO ASSEMBLER  STEPTEST                                                             05/13/2026 01:12:38 PAGE     1
+
+
+MACRO ASSEMBLER A51 V8.2.7.0
+OBJECT MODULE PLACED IN .\Objects\stepTest.obj
+ASSEMBLER INVOKED BY: C:\Users\User\AppData\Local\Keil_v5\C51\BIN\A51.EXE stepTest.a51 SET(SMALL) DEBUG PRINT(.\Listings
+                      \stepTest.lst) OBJECT(.\Objects\stepTest.obj) EP
+
+LOC  OBJ            LINE     SOURCE
+
+                       1     $mod51 
+                       2     
+  009E                 3     T3CON   EQU     09EH
+  009D                 4     T3FD    EQU     09DH
+                       5     
+----                   6             CSEG
+0000                   7             ORG     0000H
+0000 020100            8             LJMP    MAIN
+                       9     
+0100                  10             ORG     0100H
+                      11     
+                      12     ; -------------------------------------------------------
+                      13     ; MAIN — serial init, then command loop
+                      14     ; -------------------------------------------------------
+0100                  15     MAIN:
+0100 759D2D           16             MOV     T3FD,  #2DH     ; Baud rate divisor for 9600 @ 11.0592 MHz
+0103 759E86           17             MOV     T3CON, #86H     ; Enable timer 3 as baud-rate generator
+0106 759850           18             MOV     SCON,  #50H     ; Mode 1 (8-bit UART), REN enabled
+0109 75A0FF           19                     MOV P2, #0FFH
+010C                  20     TEST:
+                      21     
+010C 75A00C           22         MOV P2,#0CH
+010F 3122             23             ACALL DELAY
+                      24     
+0111 75A006           25             MOV P2,#06H
+0114 3122             26             ACALL DELAY
+                      27     
+0116 75A003           28             MOV P2,#03H
+0119 3122             29             ACALL DELAY
+                      30     
+011B 75A009           31             MOV P2,#09H
+011E 3122             32             ACALL DELAY
+0120 80EA             33             JMP TEST
+                      34     
+                      35             
+0122                  36             DELAY:
+0122 7D02             37                 MOV     R5,#2
+0124 7EFF             38     D2:     MOV     R6, #255
+0126 7FFF             39     D1:     MOV     R7, #255
+0128 DFFE             40             DJNZ    R7, $
+012A DEFA             41             DJNZ    R6, D1
+012C DDF6             42                     DJNZ R5, D2
+012E 22               43             RET
+                      44     
+                      45             
+                      46     END
+A51 MACRO ASSEMBLER  STEPTEST                                                             05/13/2026 01:12:38 PAGE     2
+
+SYMBOL TABLE LISTING
+------ ----- -------
+
+
+N A M E             T Y P E  V A L U E   ATTRIBUTES
+
+D1 . . . . . . . .  C ADDR   0126H   A   
+D2 . . . . . . . .  C ADDR   0124H   A   
+DELAY. . . . . . .  C ADDR   0122H   A   
+MAIN . . . . . . .  C ADDR   0100H   A   
+P2 . . . . . . . .  D ADDR   00A0H   A   
+SCON . . . . . . .  D ADDR   0098H   A   
+T3CON. . . . . . .  N NUMB   009EH   A   
+T3FD . . . . . . .  N NUMB   009DH   A   
+TEST . . . . . . .  C ADDR   010CH   A   
+
+
+REGISTER BANK(S) USED: 0 
+
+
+ASSEMBLY COMPLETE.  0 WARNING(S), 0 ERROR(S)

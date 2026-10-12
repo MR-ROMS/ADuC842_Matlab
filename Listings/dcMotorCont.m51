@@ -1,0 +1,128 @@
+BL51 BANKED LINKER/LOCATER V6.22.4.0                                                    05/08/2026  13:27:04  PAGE 1
+
+
+BL51 BANKED LINKER/LOCATER V6.22.4.0, INVOKED BY:
+C:\USERS\USER\APPDATA\LOCAL\KEIL_V5\C51\BIN\BL51.EXE .\Objects\dcm.obj TO .\Objects\dcMotorCont PRINT (.\Listings\dcMoto
+>> rCont.m51) RAMSIZE (256)
+
+
+INPUT MODULES INCLUDED:
+  .\Objects\dcm.obj (DCM)
+
+
+LINK MAP OF MODULE:  .\Objects\dcMotorCont (DCM)
+
+
+            TYPE    BASE      LENGTH    RELOCATION   SEGMENT NAME
+            -----------------------------------------------------
+
+            * * * * * * *   D A T A   M E M O R Y   * * * * * * *
+            REG     0000H     0008H     ABSOLUTE     "REG BANK 0"
+
+            * * * * * * *   C O D E   M E M O R Y   * * * * * * *
+            CODE    0000H     0170H     ABSOLUTE     
+
+
+
+SYMBOL TABLE OF MODULE:  .\Objects\dcMotorCont (DCM)
+
+  VALUE           TYPE          NAME
+  ----------------------------------
+
+  -------         MODULE        DCM
+  C:0125H         SYMBOL        CHECK_HIGH
+  C:0131H         SYMBOL        DO_REVERSE
+  C:013BH         SYMBOL        F_LOOP
+  C:014AH         SYMBOL        F_OFF
+  C:0142H         SYMBOL        F_ON
+  C:0100H         SYMBOL        MAIN
+  C:010FH         SYMBOL        MAIN_LOOP
+  C:012AH         SYMBOL        NORMAL_PWM
+  D:00A0H         SYMBOL        P2
+  C:0135H         SYMBOL        PWM_FORWARD
+  C:014FH         SYMBOL        PWM_REVERSE
+  B:0098H.0       SYMBOL        RI
+  C:0155H         SYMBOL        R_LOOP
+  C:0164H         SYMBOL        R_OFF
+  C:015CH         SYMBOL        R_ON
+  D:0099H         SYMBOL        SBUF
+  D:0098H         SYMBOL        SCON
+  C:0169H         SYMBOL        STOP
+  D:009EH         SYMBOL        T3CON
+  D:009DH         SYMBOL        T3FD
+  C:0116H         SYMBOL        WAIT_DIR
+  C:010FH         SYMBOL        WAIT_SPEED
+  C:0000H         LINE#         13
+  C:0100H         LINE#         18
+  C:0103H         LINE#         19
+  C:0106H         LINE#         20
+  C:0109H         LINE#         23
+  C:010BH         LINE#         24
+  C:010DH         LINE#         25
+BL51 BANKED LINKER/LOCATER V6.22.4.0                                                  05/08/2026  13:27:04  PAGE 2
+
+
+  C:010FH         LINE#         29
+  C:0112H         LINE#         30
+  C:0114H         LINE#         31
+  C:0116H         LINE#         34
+  C:0119H         LINE#         35
+  C:011BH         LINE#         36
+  C:011DH         LINE#         38
+  C:011EH         LINE#         39
+  C:0120H         LINE#         42
+  C:0123H         LINE#         43
+  C:0125H         LINE#         45
+  C:0128H         LINE#         46
+  C:012AH         LINE#         49
+  C:012DH         LINE#         50
+  C:012FH         LINE#         51
+  C:0131H         LINE#         53
+  C:0133H         LINE#         54
+  C:0135H         LINE#         60
+  C:0137H         LINE#         61
+  C:0139H         LINE#         62
+  C:013BH         LINE#         65
+  C:013CH         LINE#         66
+  C:013EH         LINE#         69
+  C:0140H         LINE#         70
+  C:0141H         LINE#         71
+  C:0142H         LINE#         72
+  C:0144H         LINE#         75
+  C:0146H         LINE#         76
+  C:0148H         LINE#         77
+  C:0149H         LINE#         78
+  C:014AH         LINE#         79
+  C:014CH         LINE#         81
+  C:014EH         LINE#         82
+  C:014FH         LINE#         88
+  C:0151H         LINE#         89
+  C:0153H         LINE#         90
+  C:0155H         LINE#         93
+  C:0156H         LINE#         94
+  C:0158H         LINE#         97
+  C:015AH         LINE#         98
+  C:015BH         LINE#         99
+  C:015CH         LINE#         100
+  C:015EH         LINE#         103
+  C:0160H         LINE#         104
+  C:0162H         LINE#         105
+  C:0163H         LINE#         106
+  C:0164H         LINE#         107
+  C:0166H         LINE#         109
+  C:0168H         LINE#         110
+  C:0169H         LINE#         116
+  C:016BH         LINE#         117
+  C:016DH         LINE#         118
+  C:016FH         LINE#         119
+  -------         ENDMOD        DCM
+
+******************************************************************************
+* RESTRICTED VERSION WITH 0800H BYTE CODE SIZE LIMIT; USED: 0073H BYTE ( 5%) *
+BL51 BANKED LINKER/LOCATER V6.22.4.0                                                  05/08/2026  13:27:04  PAGE 3
+
+
+******************************************************************************
+
+Program Size: data=8.0 xdata=0 code=368
+LINK/LOCATE RUN COMPLETE.  0 WARNING(S),  0 ERROR(S)

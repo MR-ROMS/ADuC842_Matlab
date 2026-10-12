@@ -1,0 +1,112 @@
+A51 MACRO ASSEMBLER  SUSEVIYE                                                             04/22/2026 20:49:11 PAGE     1
+
+
+MACRO ASSEMBLER A51 V8.2.7.0
+OBJECT MODULE PLACED IN .\Objects\suSeviye.obj
+ASSEMBLER INVOKED BY: C:\Users\User\AppData\Local\Keil_v5\C51\BIN\A51.EXE suSeviye.a51 SET(SMALL) DEBUG PRINT(.\Listings
+                      \suSeviye.lst) OBJECT(.\Objects\suSeviye.obj) EP
+
+LOC  OBJ            LINE     SOURCE
+
+                       1     $mod51 
+                       2     
+  00DC                 3         SCONV    EQU 0DCH
+  00DF                 4         ADCI     EQU 0DFH
+  00EF                 5         ADCCON1  EQU 0EFH
+  00D8                 6         ADCCON2  EQU 0D8H
+  00D9                 7         ADCDATAL EQU 0D9H
+  00DA                 8         ADCDATAH EQU 0DAH
+  009E                 9         T3CON    EQU 09EH
+  009D                10         T3FD     EQU 09DH
+                      11     
+----                  12         CSEG
+0000                  13             ORG 0000H
+0000 2100             14             JMP MAIN
+0100                  15             ORG 0100H
+                      16     
+0100                  17     MAIN:
+0100 75EF8C           18             MOV ADCCON1, #8CH       ; ADC: Internal Vref, CLK/32, 12-bit
+0103 75D801           19             MOV ADCCON2, #01H       ; Channel 1
+                      20     
+0106 759E83           21             MOV T3CON, #83H        
+0109 759D2D           22             MOV T3FD,  #2DH
+                      23     
+010C 759850           24             MOV SCON,  #50H         ; UART mode 1, REN enabled
+                      25     
+010F                  26     LOOP:
+010F D2DC             27             SETB SCONV              ; Start ADC
+0111 30DFFD           28             JNB  ADCI, $            ; Wait conversion
+0114 C2DF             29             CLR  ADCI
+                      30     
+                      31             ;SYNC BYTE
+0116 74AA             32             MOV  A, #0AAH
+0118 3128             33             CALL OKUMA
+                      34     
+                      35             ;SEND ADC (HIGH then LOW)
+011A E5DA             36             MOV  A, ADCDATAH
+011C 3128             37             CALL OKUMA
+                      38     
+011E E5D9             39             MOV  A, ADCDATAL
+0120 3128             40             CALL OKUMA
+                      41     
+                      42             ; DELAY 
+0122 7405             43             MOV  A, #05H
+0124 3130             44             CALL DELAY
+                      45     
+0126 80E7             46             JMP  LOOP
+                      47     
+                      48     
+                      49     ;UART SEND
+0128                  50     OKUMA:
+0128 F599             51             MOV  SBUF, A
+012A 3099FD           52             JNB  TI, $
+012D C299             53             CLR  TI
+012F 22               54             RET
+                      55     
+                      56     
+                      57     ;DELAY 
+A51 MACRO ASSEMBLER  SUSEVIYE                                                             04/22/2026 20:49:11 PAGE     2
+
+0130                  58     DELAY:
+0130 FB               59             MOV  R3, A
+0131                  60     DLY2:
+0131 7A90             61             MOV  R2, #090H
+0133                  62     DLY1:
+0133 79FF             63             MOV  R1, #0FFH
+0135 D9FE             64             DJNZ R1, $
+0137 DAFA             65             DJNZ R2, DLY1
+0139 DBF6             66             DJNZ R3, DLY2
+013B 22               67             RET
+                      68     
+                      69     END
+A51 MACRO ASSEMBLER  SUSEVIYE                                                             04/22/2026 20:49:11 PAGE     3
+
+SYMBOL TABLE LISTING
+------ ----- -------
+
+
+N A M E             T Y P E  V A L U E   ATTRIBUTES
+
+ADCCON1. . . . . .  N NUMB   00EFH   A   
+ADCCON2. . . . . .  N NUMB   00D8H   A   
+ADCDATAH . . . . .  N NUMB   00DAH   A   
+ADCDATAL . . . . .  N NUMB   00D9H   A   
+ADCI . . . . . . .  N NUMB   00DFH   A   
+DELAY. . . . . . .  C ADDR   0130H   A   
+DLY1 . . . . . . .  C ADDR   0133H   A   
+DLY2 . . . . . . .  C ADDR   0131H   A   
+LOOP . . . . . . .  C ADDR   010FH   A   
+MAIN . . . . . . .  C ADDR   0100H   A   
+OKUMA. . . . . . .  C ADDR   0128H   A   
+SBUF . . . . . . .  D ADDR   0099H   A   
+SCON . . . . . . .  D ADDR   0098H   A   
+SCONV. . . . . . .  N NUMB   00DCH   A   
+T3CON. . . . . . .  N NUMB   009EH   A   
+T3FD . . . . . . .  N NUMB   009DH   A   
+TI . . . . . . . .  B ADDR   0098H.1 A   
+
+
+REGISTER BANK(S) USED: 0 
+
+
+ASSEMBLY COMPLETE.  0 WARNING(S), 0 ERROR(S)

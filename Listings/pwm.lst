@@ -1,0 +1,87 @@
+A51 MACRO ASSEMBLER  PWM                                                                  03/22/2026 23:15:44 PAGE     1
+
+
+MACRO ASSEMBLER A51 V8.2.7.0
+OBJECT MODULE PLACED IN .\Objects\pwm.obj
+ASSEMBLER INVOKED BY: C:\Users\User\AppData\Local\Keil_v5\C51\BIN\A51.EXE pwm.a51 SET(SMALL) DEBUG PRINT(.\Listings\pwm.
+                      lst) OBJECT(.\Objects\pwm.obj) EP
+
+LOC  OBJ            LINE     SOURCE
+
+                       1     $nomod51 
+                       2     ; PWM Definitions for ADuC842
+  00B1                 3     PWM0L   EQU 0xB1
+  00B2                 4     PWM0H   EQU 0xB2
+  00B3                 5     PWM1L   EQU 0xB3
+  00B4                 6     PWM1H   EQU 0xB4
+  00AE                 7     PWMCON  EQU 0xAE
+  00A0                 8     P2      EQU    0xA0    ; Defines the Port 2 SFR address
+                       9     
+                      10     ; Bu program P1.7 pinine gore calisir ve P2.0 pininin durumuna gore duty cycle degisir
+                      11     
+----                  12     CSEG
+0000                  13     ORG 0000H
+                      14     
+0000                  15     MAIN:
+0000 20A013           16         JB      P2.0, H2        ; If P2.0 is high, jump to H2 (+90)
+                      17         
+                      18                              ; Routine for -90 degrees
+0003 75B160           19     H1:   MOV     PWM0L, #60H
+0006 75B209           20           MOV     PWM0H, #09H
+0009 75B3EA           21           MOV     PWM1L, #0EAH
+000C 75B451           22           MOV     PWM1H, #51H
+000F 75AE1B           23           MOV     PWMCON, #1BH
+0012 1129             24           CALL   DELAY1_66
+                      25         
+0014 80EA             26           JMP     MAIN
+                      27     
+                      28                              ; Routine for +90 degrees
+0016 75B158           29     H2:   MOV     PWM0L, #58H
+0019 75B202           30           MOV     PWM0H, #02H
+001C 75B3EA           31           MOV     PWM1L, #0EAH
+001F 75B451           32           MOV     PWM1H, #51H
+0022 75AE1B           33           MOV     PWMCON, #1BH
+0025 1129             34           CALL   DELAY1_66
+                      35         
+0027 80D7             36           JMP     MAIN
+                      37             
+                      38             
+0029                  39      DELAY1_66:
+0029 7C7D             40                   MOV     R4, #125        ; 180 DERECE ICIN
+002B 7D30             41           DLY01:  MOV     R5, #30H        ; 20
+002D 7E30             42           DLY02:  MOV     R6, #30H        ; 20
+002F 00               43                   NOP
+0030 DEFE             44                   DJNZ    R6, $
+0032 DDF9             45                   DJNZ    R5, DLY02
+0034 DCF5             46                   DJNZ    R4, DLY01
+                      47         
+0036 75AE0B           48                   MOV     PWMCON, #0BH
+0039 22               49       RET
+                      50     
+                      51     END
+A51 MACRO ASSEMBLER  PWM                                                                  03/22/2026 23:15:44 PAGE     2
+
+SYMBOL TABLE LISTING
+------ ----- -------
+
+
+N A M E             T Y P E  V A L U E   ATTRIBUTES
+
+DELAY1_66. . . . .  C ADDR   0029H   A   
+DLY01. . . . . . .  C ADDR   002BH   A   
+DLY02. . . . . . .  C ADDR   002DH   A   
+H1 . . . . . . . .  C ADDR   0003H   A   
+H2 . . . . . . . .  C ADDR   0016H   A   
+MAIN . . . . . . .  C ADDR   0000H   A   
+P2 . . . . . . . .  N NUMB   00A0H   A   
+PWM0H. . . . . . .  N NUMB   00B2H   A   
+PWM0L. . . . . . .  N NUMB   00B1H   A   
+PWM1H. . . . . . .  N NUMB   00B4H   A   
+PWM1L. . . . . . .  N NUMB   00B3H   A   
+PWMCON . . . . . .  N NUMB   00AEH   A   
+
+
+REGISTER BANK(S) USED: 0 
+
+
+ASSEMBLY COMPLETE.  0 WARNING(S), 0 ERROR(S)

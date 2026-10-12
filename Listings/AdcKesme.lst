@@ -1,0 +1,71 @@
+A51 MACRO ASSEMBLER  ADCKESME                                                             03/01/2026 23:19:51 PAGE     1
+
+
+MACRO ASSEMBLER A51 V8.2.7.0
+OBJECT MODULE PLACED IN .\Objects\AdcKesme.obj
+ASSEMBLER INVOKED BY: C:\Users\User\AppData\Local\Keil_v5\C51\BIN\A51.EXE AdcKesme.a51 SET(SMALL) DEBUG PRINT(.\Listings
+                      \AdcKesme.lst) OBJECT(.\Objects\AdcKesme.obj) EP
+
+LOC  OBJ            LINE     SOURCE
+
+                       1     $mod51 
+  00DC                 2             SCONV    EQU 0DCH
+  00DF                 3             ADCI     EQU 0DFH
+  00EF                 4             ADCCON1  EQU 0xEF
+  00D8                 5             ADCCON2  EQU 0xD8
+  00D9                 6             ADCDATAL EQU 0xD9
+  00DA                 7             ADCDATAH EQU 0xDA
+  009D                 8             T3FD     EQU 0x9D
+  009E                 9             T3CON    EQU 0x9E
+  00AE                10             EADC     EQU 0xAE
+                      11                     
+----                  12             CSEG
+                      13                     
+0000                  14                     ORG 0000H
+0000 2100             15                             JMP MAIN
+0033                  16                     org 0033h
+0033 210C             17                             JMP ADC_ISR
+0100                  18                     ORG 0100H
+0100                  19                             MAIN: 
+0100 75EF8C           20                             MOV ADCCON1, #8CH        ; 1 0 0 0 1 1 0 0 --> DAHILI REFERANS, CLK
+                              32-> TAVSIYE EDILEN
+0103 75D801           21                             MOV ADCCON2, #01H        ; 0 0 0 0 0 0 0 1--> KANAL SECIMI
+0106 D2AE             22                             SETB EADC
+0108 D2DC             23                             SETB SCONV
+010A 80FE             24                             JMP $
+                      25                                     
+                      26                                     
+010C                  27             ADC_ISR: 
+                      28             
+010C C2DF             29                     CLR ADCI
+010E ACDA             30                             MOV R4, ADCDATAH
+0110 ADD9             31                             MOV R5, ADCDATAL
+0112 53040F           32                             ANL   04H, #0FH         ; 04H ADRESINDE R4 VAR.
+0115 32               33                             RETI
+                      34                             
+                      35             END
+A51 MACRO ASSEMBLER  ADCKESME                                                             03/01/2026 23:19:51 PAGE     2
+
+SYMBOL TABLE LISTING
+------ ----- -------
+
+
+N A M E             T Y P E  V A L U E   ATTRIBUTES
+
+ADCCON1. . . . . .  N NUMB   00EFH   A   
+ADCCON2. . . . . .  N NUMB   00D8H   A   
+ADCDATAH . . . . .  N NUMB   00DAH   A   
+ADCDATAL . . . . .  N NUMB   00D9H   A   
+ADCI . . . . . . .  N NUMB   00DFH   A   
+ADC_ISR. . . . . .  C ADDR   010CH   A   
+EADC . . . . . . .  N NUMB   00AEH   A   
+MAIN . . . . . . .  C ADDR   0100H   A   
+SCONV. . . . . . .  N NUMB   00DCH   A   
+T3CON. . . . . . .  N NUMB   009EH   A   
+T3FD . . . . . . .  N NUMB   009DH   A   
+
+
+REGISTER BANK(S) USED: 0 
+
+
+ASSEMBLY COMPLETE.  0 WARNING(S), 0 ERROR(S)

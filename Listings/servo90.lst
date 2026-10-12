@@ -1,0 +1,230 @@
+A51 MACRO ASSEMBLER  SERVO90                                                              04/05/2026 23:34:08 PAGE     1
+
+
+MACRO ASSEMBLER A51 V8.2.7.0
+OBJECT MODULE PLACED IN .\Objects\servo90.obj
+ASSEMBLER INVOKED BY: C:\Users\User\AppData\Local\Keil_v5\C51\BIN\A51.EXE servo90.a51 SET(SMALL) DEBUG PRINT(.\Listings\
+                      servo90.lst) OBJECT(.\Objects\servo90.obj) EP
+
+LOC  OBJ            LINE     SOURCE
+
+                       1     $mod51 
+                       2     
+  00B1                 3     PWM0L  EQU 0xB1;
+  00B2                 4     PWM0H  EQU 0xB2;
+  00B3                 5     PWM1L  EQU 0xB3;
+  00B4                 6     PWM1H  EQU 0xB4;
+  00AE                 7     PWMCON EQU 0xAE;
+                       8     
+                       9     
+----                  10     CSEG
+0000                  11     ORG 000H
+0000 758901           12             MOV  TMOD, #01H 
+                      13             
+                      14             
+0003                  15             MAIN:
+                      16             ; --- 180° Servo SG90 500us-2400us(-90->+90) ---
+                      17     ; --- -90° --- 1ms = 1000us = 0x0418 ---
+0003 7818             18           MOV R0, #018H
+0005 7904             19           MOV R1, #004H
+0007 120108           20           LCALL PWM
+                      21     ; --- -80° --- 1058us = 0x0452 ---
+000A 7852             22           MOV R0, #052H
+000C 7904             23           MOV R1, #004H
+000E 120108           24           LCALL PWM
+                      25     ; --- -70 ---
+0011 788C             26           MOV R0, #08CH
+0013 7904             27           MOV R1, #004H
+0015 120108           28           LCALL PWM
+                      29     ; --- -60 ---
+0018 78C6             30           MOV R0, #0C6H
+001A 7904             31           MOV R1, #004H
+001C 120108           32           LCALL PWM
+                      33     ; --- -50 ---
+001F 7800             34           MOV R0, #000H
+0021 7905             35           MOV R1, #005H
+0023 120108           36           LCALL PWM
+                      37     ; --- -40 ---
+0026 783A             38           MOV R0, #03AH
+0028 7905             39           MOV R1, #005H
+002A 120108           40           LCALL PWM
+                      41     ; --- -30 ---
+002D 7874             42           MOV R0, #074H
+002F 7905             43           MOV R1, #005H
+0031 120108           44           LCALL PWM
+                      45     ; --- -20 ---
+0034 78AE             46           MOV R0, #0AEH
+0036 7905             47           MOV R1, #005H
+0038 120108           48           LCALL PWM
+                      49     ; --- -10 ---
+003B 78E8             50           MOV R0, #0E8H
+003D 7905             51           MOV R1, #005H
+003F 120108           52           LCALL PWM
+                      53     ; --- 0 ---
+0042 7822             54           MOV R0, #022H
+0044 7906             55           MOV R1, #006H
+0046 120108           56           LCALL PWM
+                      57     ; --- +10 ---
+A51 MACRO ASSEMBLER  SERVO90                                                              04/05/2026 23:34:08 PAGE     2
+
+0049 785C             58           MOV R0, #05CH
+004B 7906             59           MOV R1, #006H
+004D 120108           60           LCALL PWM
+                      61     ; --- +20 ---
+0050 7896             62           MOV R0, #096H
+0052 7906             63           MOV R1, #006H
+0054 120108           64           LCALL PWM
+                      65     ; --- +30---
+0057 78D0             66           MOV R0, #0D0H
+0059 7906             67           MOV R1, #006H
+005B 120108           68           LCALL PWM
+                      69     ; --- +40 ---
+005E 780A             70           MOV R0, #00AH
+0060 7907             71           MOV R1, #007H
+0062 120108           72           LCALL PWM
+                      73     ; --- +50 ---
+0065 7844             74           MOV R0, #044H
+0067 7907             75           MOV R1, #007H
+0069 120108           76           LCALL PWM
+                      77     ; --- +60 ---
+006C 787E             78           MOV R0, #07EH
+006E 7907             79           MOV R1, #007H
+0070 120108           80           LCALL PWM
+                      81     ; --- +70 ---
+0073 78B8             82           MOV R0, #0B8H
+0075 7907             83           MOV R1, #007H
+0077 120108           84           LCALL PWM
+                      85     ; --- +80 ---
+007A 78F2             86           MOV R0, #0F2H
+007C 7907             87           MOV R1, #007H
+007E 120108           88           LCALL PWM
+                      89     ; --- +90 ---
+0081 782C             90           MOV R0, #02CH
+0083 7908             91           MOV R1, #008H
+0085 120108           92           LCALL PWM
+                      93     
+                      94     ; --- +90° -> -90° ---
+                      95      ; --- +80 ---
+0088 78F2             96           MOV R0, #0F2H
+008A 7907             97           MOV R1, #007H
+008C 120108           98           LCALL PWM
+                      99     ; --- +70 ---
+008F 78B8            100           MOV R0, #0B8H
+0091 7907            101           MOV R1, #007H
+0093 120108          102           LCALL PWM
+                     103     ; --- +60 ---
+0096 787E            104           MOV R0, #07EH
+0098 7907            105           MOV R1, #007H
+009A 120108          106           LCALL PWM
+                     107     ; --- +50 ---
+009D 7844            108           MOV R0, #044H
+009F 7907            109           MOV R1, #007H
+00A1 120108          110           LCALL PWM
+                     111     ; --- +40 ---
+00A4 780A            112           MOV R0, #00AH
+00A6 7907            113           MOV R1, #007H
+00A8 120108          114           LCALL PWM
+                     115     ; --- +30---
+00AB 78D0            116           MOV R0, #0D0H
+00AD 7906            117           MOV R1, #006H
+00AF 120108          118           LCALL PWM
+                     119     ; --- +20 ---
+00B2 7896            120           MOV R0, #096H
+00B4 7906            121           MOV R1, #006H
+00B6 120108          122           LCALL PWM
+                     123     ; --- +10 ---
+A51 MACRO ASSEMBLER  SERVO90                                                              04/05/2026 23:34:08 PAGE     3
+
+00B9 785C            124           MOV R0, #05CH
+00BB 7906            125           MOV R1, #006H
+00BD 120108          126           LCALL PWM
+                     127     ; --- 0 ---
+00C0 7822            128           MOV R0, #022H
+00C2 7906            129           MOV R1, #006H
+00C4 120108          130           LCALL PWM
+                     131     ; --- -10 ---
+00C7 78E8            132           MOV R0, #0E8H
+00C9 7905            133           MOV R1, #005H
+00CB 120108          134           LCALL PWM
+                     135     ; --- -20 ---
+00CE 78AE            136           MOV R0, #0AEH
+00D0 7905            137           MOV R1, #005H
+00D2 120108          138           LCALL PWM
+                     139     ; --- -30 ---
+00D5 7874            140           MOV R0, #074H
+00D7 7905            141           MOV R1, #005H
+00D9 120108          142           LCALL PWM
+                     143     ; --- -40 ---
+00DC 783A            144           MOV R0, #03AH
+00DE 7905            145           MOV R1, #005H
+00E0 120108          146           LCALL PWM
+                     147     ; --- -50 ---
+00E3 7800            148           MOV R0, #000H
+00E5 7905            149           MOV R1, #005H
+00E7 120108          150           LCALL PWM
+                     151     ; --- -60 ---
+00EA 78C6            152           MOV R0, #0C6H
+00EC 7904            153           MOV R1, #004H
+00EE 120108          154           LCALL PWM
+                     155     ; --- -70 ---
+00F1 788C            156           MOV R0, #08CH
+00F3 7904            157           MOV R1, #004H
+00F5 120108          158           LCALL PWM
+                     159     ; --- -80 ---
+00F8 7852            160           MOV R0, #052H
+00FA 7904            161           MOV R1, #004H
+00FC 120108          162           LCALL PWM
+                     163     ; --- -90 ---
+00FF 7818            164           MOV R0, #018H
+0101 7904            165           MOV R1, #004H
+0103 120108          166           LCALL PWM
+                     167     
+0106 0103            168           JMP MAIN      
+                     169               
+0108                 170     PWM:
+0108 88B1            171         MOV PWM0L,  R0
+010A 89B2            172         MOV PWM0H,  R1
+010C 75B3EA          173         MOV PWM1L, #0EAH
+010F 75B451          174         MOV PWM1H, #51H
+0112 75AE1B          175         MOV PWMCON,#1BH
+0115 120119          176         LCALL DELAY1
+0118 22              177         RET
+                     178     
+0119                 179     DELAY1:   
+0119 758C63          180         MOV  TH0,  #063H   
+011C 758AC0          181         MOV  TL0,  #0C0H   
+011F D28C            182         SETB TR0           
+0121 308DFD          183         JNB  TF0, $  
+0124 C28C            184         CLR  TR0          
+0126 C28D            185         CLR  TF0          
+0128 22              186         RET
+                     187             
+                     188             
+                     189     END
+A51 MACRO ASSEMBLER  SERVO90                                                              04/05/2026 23:34:08 PAGE     4
+
+SYMBOL TABLE LISTING
+------ ----- -------
+
+
+N A M E             T Y P E  V A L U E   ATTRIBUTES
+
+DELAY1 . . . . . .  C ADDR   0119H   A   
+MAIN . . . . . . .  C ADDR   0003H   A   
+PWM. . . . . . . .  C ADDR   0108H   A   
+PWM0H. . . . . . .  N NUMB   00B2H   A   
+PWM0L. . . . . . .  N NUMB   00B1H   A   
+PWM1H. . . . . . .  N NUMB   00B4H   A   
+PWM1L. . . . . . .  N NUMB   00B3H   A   
+PWMCON . . . . . .  N NUMB   00AEH   A   
+TF0. . . . . . . .  B ADDR   0088H.5 A   
+TH0. . . . . . . .  D ADDR   008CH   A   
+TL0. . . . . . . .  D ADDR   008AH   A   
+TMOD . . . . . . .  D ADDR   0089H   A   
+TR0. . . . . . . .  B ADDR   0088H.4 A   
+
+
+REGISTER BANK(S) USED: 0 
+
+
+ASSEMBLY COMPLETE.  0 WARNING(S), 0 ERROR(S)

@@ -1,0 +1,146 @@
+A51 MACRO ASSEMBLER  SERVOPWM                                                             06/20/2026 15:07:55 PAGE     1
+
+
+MACRO ASSEMBLER A51 V8.2.7.0
+OBJECT MODULE PLACED IN .\Objects\servopwm.obj
+ASSEMBLER INVOKED BY: C:\Users\User\AppData\Local\Keil_v5\C51\BIN\A51.EXE servopwm.a51 SET(SMALL) DEBUG PRINT(.\Listings
+                      \servopwm.lst) OBJECT(.\Objects\servopwm.obj) EP
+
+LOC  OBJ            LINE     SOURCE
+
+                       1     
+                       2     $mod51 
+  00B1                 3     PWM0L  EQU 0xB1;
+  00B2                 4     PWM0H  EQU 0xB2;
+  00B3                 5     PWM1L  EQU 0xB3;
+  00B4                 6     PWM1H  EQU 0xB4;
+  00AE                 7     PWMCON EQU 0xAE;
+                       8     
+                       9     
+----                  10     CSEG
+0000                  11     ORG 000H
+                      12             ;MOV  TMOD, #01H 
+                      13             
+0000                  14     MAIN:
+0000 901000           15         MOV DPTR, #PWMDATA
+0003 7800             16         MOV R0,   #0H          ; table index start
+                      17     
+0005                  18     BACK:
+                      19         ; PWM0L degeri okunuyor
+0005 E8               20         MOV  A, R0
+0006 93               21         MOVC A, @A+DPTR
+0007 F5B1             22         MOV  PWM0L, A
+                      23     
+                      24         ; PWM0H degeri okunuyor
+0009 08               25         INC  R0
+000A E8               26         MOV  A, R0
+000B 93               27         MOVC A, @A+DPTR
+000C F5B2             28         MOV  PWM0H, A
+                      29     
+                      30         ;  PWM1 VE PWMCON
+000E 75B3EA           31         MOV PWM1L,  #0EAH
+0011 75B451           32         MOV PWM1H,  #051H
+0014 75AE1B           33         MOV PWMCON, #1BH
+                      34     
+0017 120023           35         LCALL DELAY1
+001A 00               36             NOP
+                      37     
+                      38         ; sonraki açiya git
+001B 08               39         INC  R0
+001C B84AE6           40         CJNE R0, #4AH, BACK   ; 38 angles × 2 bytes = 74 = 0x4A
+                      41     
+001F 7800             42         MOV  R0, #0H            ; sona gelince basa dön
+0021 80E2             43         JMP  BACK
+                      44     
+0023                  45     DELAY1:
+0023 7CB4             46                     MOV R4,#180
+0025 7D21             47     DLY01:  MOV R5,#21H
+0027 7E21             48     DLY02:  MOV R6,#21H
+0029 00               49                     NOP
+002A 00               50                     NOP
+002B DEFE             51                     DJNZ R6,$
+002D DDF8             52                     DJNZ R5,DLY02
+002F DCF4             53                     DJNZ R4,DLY01
+0031 75AE0B           54                     MOV  PWMCON,#0BH
+0034 22               55                     RET
+                      56     ;    MOV  TH0,  #092H
+                      57     ;    MOV  TL0,  #0CFH
+A51 MACRO ASSEMBLER  SERVOPWM                                                             06/20/2026 15:07:55 PAGE     2
+
+                      58     ;    SETB TR0
+                      59     ;    JNB  TF0, $
+                      60     ;    CLR  TR0
+                      61     ;    CLR  TF0
+0035 22               62          RET
+                      63     
+                      64     
+                      65     
+1000                  66         ORG 1000H
+1000                  67     PWMDATA:
+                      68         ; --- 0° to 180° ---
+1000 0C02             69         DB 0CH, 02H    ; 0°   = 524
+1002 7B02             70         DB 7BH, 02H    ; 10°  = 635
+1004 EA02             71         DB 0EAH,02H    ; 20°  = 746
+1006 5903             72         DB 59H, 03H    ; 30°  = 857
+1008 C803             73         DB 0C8H,03H    ; 40°  = 968
+100A 3704             74         DB 37H, 04H    ; 50°  = 1079
+100C A604             75         DB 0A6H,04H    ; 60°  = 1190
+100E 1505             76         DB 15H, 05H    ; 70°  = 1301
+1010 8405             77         DB 84H, 05H    ; 80°  = 1412
+1012 F305             78         DB 0F3H,05H    ; 90°  = 1523
+1014 6206             79         DB 62H, 06H    ; 100° = 1634
+1016 D106             80         DB 0D1H,06H    ; 110° = 1745
+1018 4007             81         DB 40H, 07H    ; 120° = 1856
+101A AF07             82         DB 0AFH,07H    ; 130° = 1967
+101C 1E08             83         DB 1EH, 08H    ; 140° = 2078
+101E 8D08             84         DB 8DH, 08H    ; 150° = 2189
+1020 FC08             85         DB 0FCH,08H    ; 160° = 2300
+1022 6B09             86         DB 6BH, 09H    ; 170° = 2411
+1024 DA09             87         DB 0DAH,09H    ; 180° = 2522
+                      88         ; --- 180° to 0° ---
+1026 6B09             89         DB 6BH, 09H    ; 170° = 2411
+1028 FC08             90         DB 0FCH,08H    ; 160° = 2300
+102A 8D08             91         DB 8DH, 08H    ; 150° = 2189
+102C 1E08             92         DB 1EH, 08H    ; 140° = 2078
+102E AF07             93         DB 0AFH,07H    ; 130° = 1967
+1030 4007             94         DB 40H, 07H    ; 120° = 1856
+1032 D106             95         DB 0D1H,06H    ; 110° = 1745
+1034 6206             96         DB 62H, 06H    ; 100° = 1634
+1036 F305             97         DB 0F3H,05H    ; 90°  = 1523
+1038 8405             98         DB 84H, 05H    ; 80°  = 1412
+103A 1505             99         DB 15H, 05H    ; 70°  = 1301
+103C A604            100         DB 0A6H,04H    ; 60°  = 1190
+103E 3704            101         DB 37H, 04H    ; 50°  = 1079
+1040 C803            102         DB 0C8H,03H    ; 40°  = 968
+1042 5903            103         DB 59H, 03H    ; 30°  = 857
+1044 EA02            104         DB 0EAH,02H    ; 20°  = 746
+1046 7B02            105         DB 7BH, 02H    ; 10°  = 635
+1048 0C02            106         DB 0CH, 02H    ; 0°   = 524
+                     107             
+                     108     
+                     109     END
+A51 MACRO ASSEMBLER  SERVOPWM                                                             06/20/2026 15:07:55 PAGE     3
+
+SYMBOL TABLE LISTING
+------ ----- -------
+
+
+N A M E             T Y P E  V A L U E   ATTRIBUTES
+
+BACK . . . . . . .  C ADDR   0005H   A   
+DELAY1 . . . . . .  C ADDR   0023H   A   
+DLY01. . . . . . .  C ADDR   0025H   A   
+DLY02. . . . . . .  C ADDR   0027H   A   
+MAIN . . . . . . .  C ADDR   0000H   A   
+PWM0H. . . . . . .  N NUMB   00B2H   A   
+PWM0L. . . . . . .  N NUMB   00B1H   A   
+PWM1H. . . . . . .  N NUMB   00B4H   A   
+PWM1L. . . . . . .  N NUMB   00B3H   A   
+PWMCON . . . . . .  N NUMB   00AEH   A   
+PWMDATA. . . . . .  C ADDR   1000H   A   
+
+
+REGISTER BANK(S) USED: 0 
+
+
+ASSEMBLY COMPLETE.  0 WARNING(S), 0 ERROR(S)

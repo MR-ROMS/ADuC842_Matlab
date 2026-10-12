@@ -1,0 +1,79 @@
+BL51 BANKED LINKER/LOCATER V6.22.4.0                                                    03/15/2026  15:02:23  PAGE 1
+
+
+BL51 BANKED LINKER/LOCATER V6.22.4.0, INVOKED BY:
+C:\USERS\USER\APPDATA\LOCAL\KEIL_V5\C51\BIN\BL51.EXE .\Objects\SineWave.obj TO .\Objects\sineWave PRINT (.\Listings\sine
+>> Wave.m51) RAMSIZE (256)
+
+
+INPUT MODULES INCLUDED:
+  .\Objects\SineWave.obj (SINEWAVE)
+
+
+LINK MAP OF MODULE:  .\Objects\sineWave (SINEWAVE)
+
+
+            TYPE    BASE      LENGTH    RELOCATION   SEGMENT NAME
+            -----------------------------------------------------
+
+            * * * * * * *   D A T A   M E M O R Y   * * * * * * *
+            REG     0000H     0008H     ABSOLUTE     "REG BANK 0"
+
+            * * * * * * *   C O D E   M E M O R Y   * * * * * * *
+            CODE    0000H     1040H     ABSOLUTE     
+
+
+
+SYMBOL TABLE OF MODULE:  .\Objects\sineWave (SINEWAVE)
+
+  VALUE           TYPE          NAME
+  ----------------------------------
+
+  -------         MODULE        SINEWAVE
+  N:00EFH         SYMBOL        ADCCON1
+  C:0000H         SYMBOL        BASLA
+  N:00FAH         SYMBOL        DAC0H
+  N:00F9H         SYMBOL        DAC0L
+  N:00FDH         SYMBOL        DACCON
+  C:0011H         SYMBOL        DACYAZ
+  C:1000H         SYMBOL        TABLE
+  D:0088H         SYMBOL        TCON
+  B:0088H.5       SYMBOL        TF0
+  D:008CH         SYMBOL        TH0
+  D:008AH         SYMBOL        TL0
+  D:0089H         SYMBOL        TMOD
+  B:0088H.4       SYMBOL        TR0
+  C:0000H         LINE#         15
+  C:0003H         LINE#         16
+  C:0006H         LINE#         18
+  C:0009H         LINE#         19
+  C:000CH         LINE#         20
+  C:000FH         LINE#         21
+  C:0011H         LINE#         24
+  C:0012H         LINE#         25
+  C:0013H         LINE#         26
+  C:0014H         LINE#         27
+  C:0015H         LINE#         28
+  C:0016H         LINE#         29
+  C:0017H         LINE#         30
+  C:0018H         LINE#         32
+  C:001AH         LINE#         33
+  C:001CH         LINE#         35
+BL51 BANKED LINKER/LOCATER V6.22.4.0                                                  03/15/2026  15:02:23  PAGE 2
+
+
+  C:001EH         LINE#         36
+  C:0021H         LINE#         37
+  C:0024H         LINE#         38
+  C:0026H         LINE#         39
+  C:0029H         LINE#         41
+  C:002AH         LINE#         42
+  C:002DH         LINE#         43
+  -------         ENDMOD        SINEWAVE
+
+******************************************************************************
+* RESTRICTED VERSION WITH 0800H BYTE CODE SIZE LIMIT; USED: 006FH BYTE ( 5%) *
+******************************************************************************
+
+Program Size: data=8.0 xdata=0 code=4160
+LINK/LOCATE RUN COMPLETE.  0 WARNING(S),  0 ERROR(S)

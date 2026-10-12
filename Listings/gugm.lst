@@ -1,0 +1,286 @@
+A51 MACRO ASSEMBLER  GUGM                                                                 06/20/2026 22:56:07 PAGE     1
+
+
+MACRO ASSEMBLER A51 V8.2.7.0
+OBJECT MODULE PLACED IN .\Objects\gugm.obj
+ASSEMBLER INVOKED BY: C:\Users\User\AppData\Local\Keil_v5\C51\BIN\A51.EXE gugm.a51 SET(SMALL) DEBUG PRINT(.\Listings\gug
+                      m.lst) OBJECT(.\Objects\gugm.obj) EP
+
+LOC  OBJ            LINE     SOURCE
+
+                       1     $mod51 
+                       2     
+                       3     ; ============================================================
+                       4     ; I2C TEST WITH UART DEBUG - Sends results to MATLAB
+                       5     ; ============================================================
+                       6     
+  00A0                 7     SDAT_PIN BIT P2.0
+  00A1                 8     SCLK_PIN BIT P2.1
+                       9     
+  0080                10     PCA_ADDR EQU 080H
+  0000                11     MODE1_REG EQU 000H
+  00FE                12     PRE_SCALE EQU 0FEH
+  0006                13     LED0_ON_L EQU 006H
+  009E                14     T3CON   EQU 09EH
+  009D                15     T3FD    EQU 09DH
+----                  16     CSEG
+0000                  17     ORG 0000H
+0000 020080           18         LJMP START
+                      19     
+0080                  20     ORG 0080H
+0080                  21     START:
+0080 75817F           22         MOV SP,#7FH
+                      23         
+                      24         ; Configure UART (9600 baud)
+0083 759D2D           25         MOV T3FD,#02DH
+0086 759E83           26         MOV T3CON,#083H
+0089 759850           27         MOV SCON,#050H
+                      28     
+                      29         ; Send startup message
+008C 90017E           30         MOV DPTR,#MSG_START
+008F 1200A0           31         LCALL SEND_STRING
+                      32     
+                      33         ; Initialize PCA9685
+0092 1200B3           34         LCALL PCA_INIT
+                      35     
+0095                  36     MAIN:
+                      37         ; Move servo to 90°
+0095 120108           38         LCALL SERVO_90
+0098 9001C5           39         MOV DPTR,#MSG_DONE
+009B 1200A0           40         LCALL SEND_STRING
+009E 80F5             41         SJMP MAIN
+                      42     
+                      43     ; ============================================================
+                      44     ; SEND_STRING - Send string to UART
+                      45     ; ============================================================
+00A0                  46     SEND_STRING:
+00A0 E4               47         CLR A
+00A1 93               48         MOVC A,@A+DPTR
+00A2 6006             49         JZ SEND_DONE
+00A4 1200AB           50         LCALL SEND_CHAR
+00A7 A3               51         INC DPTR
+00A8 80F6             52         SJMP SEND_STRING
+00AA                  53     SEND_DONE:
+00AA 22               54         RET
+                      55     
+00AB                  56     SEND_CHAR:
+00AB F599             57         MOV SBUF,A
+A51 MACRO ASSEMBLER  GUGM                                                                 06/20/2026 22:56:07 PAGE     2
+
+00AD 3099FD           58         JNB TI,$
+00B0 C299             59         CLR TI
+00B2 22               60         RET
+                      61     
+                      62     ; ============================================================
+00B3                  63     PCA_INIT:
+                      64         ; Send "Init PCA..."
+00B3 900194           65         MOV DPTR,#MSG_INIT
+00B6 1200A0           66         LCALL SEND_STRING
+                      67         
+                      68         ; Sleep mode
+00B9 12012D           69         LCALL I2C_START
+00BC 7480             70         MOV A,#PCA_ADDR
+00BE 12014D           71         LCALL I2C_YAZ
+00C1 7400             72         MOV A,#MODE1_REG
+00C3 12014D           73         LCALL I2C_YAZ
+00C6 7410             74         MOV A,#010H
+00C8 12014D           75         LCALL I2C_YAZ
+00CB 12013E           76         LCALL I2C_STOP
+00CE 120175           77         LCALL DELAY
+                      78     
+                      79         ; Set prescaler for 50Hz
+00D1 12012D           80         LCALL I2C_START
+00D4 7480             81         MOV A,#PCA_ADDR
+00D6 12014D           82         LCALL I2C_YAZ
+00D9 74FE             83         MOV A,#PRE_SCALE
+00DB 12014D           84         LCALL I2C_YAZ
+00DE 7479             85         MOV A,#79H
+00E0 12014D           86         LCALL I2C_YAZ
+00E3 12013E           87         LCALL I2C_STOP
+00E6 120175           88         LCALL DELAY
+                      89     
+                      90         ; Wake up
+00E9 12012D           91         LCALL I2C_START
+00EC 7480             92         MOV A,#PCA_ADDR
+00EE 12014D           93         LCALL I2C_YAZ
+00F1 7400             94         MOV A,#MODE1_REG
+00F3 12014D           95         LCALL I2C_YAZ
+00F6 7421             96         MOV A,#021H
+00F8 12014D           97         LCALL I2C_YAZ
+00FB 12013E           98         LCALL I2C_STOP
+00FE 120175           99         LCALL DELAY
+                     100         
+0101 9001AE          101         MOV DPTR,#MSG_OK
+0104 1200A0          102         LCALL SEND_STRING
+0107 22              103         RET
+                     104     
+                     105     ; ============================================================
+0108                 106     SERVO_90:
+0108 12012D          107         LCALL I2C_START
+010B 7480            108         MOV A,#PCA_ADDR
+010D 12014D          109         LCALL I2C_YAZ
+0110 7406            110         MOV A,#LED0_ON_L
+0112 12014D          111         LCALL I2C_YAZ
+0115 7400            112         MOV A,#00H
+0117 12014D          113         LCALL I2C_YAZ
+011A 7400            114         MOV A,#00H
+011C 12014D          115         LCALL I2C_YAZ
+011F 7433            116         MOV A,#33H
+0121 12014D          117         LCALL I2C_YAZ
+0124 7401            118         MOV A,#01H
+0126 12014D          119         LCALL I2C_YAZ
+0129 12013E          120         LCALL I2C_STOP
+012C 22              121         RET
+                     122     
+                     123     ; ============================================================
+A51 MACRO ASSEMBLER  GUGM                                                                 06/20/2026 22:56:07 PAGE     3
+
+012D                 124     I2C_START:
+012D D2A0            125         SETB SDAT_PIN
+012F D2A1            126         SETB SCLK_PIN
+0131 7F0A            127         MOV R7,#10
+0133 DFFE            128     S1: DJNZ R7,S1
+0135 C2A0            129         CLR SDAT_PIN
+0137 7F0A            130         MOV R7,#10
+0139 DFFE            131     S2: DJNZ R7,S2
+013B C2A1            132         CLR SCLK_PIN
+013D 22              133         RET
+                     134     
+013E                 135     I2C_STOP:
+013E C2A0            136         CLR SDAT_PIN
+0140 7F0A            137         MOV R7,#10
+0142 DFFE            138     P01: DJNZ R7,P01
+0144 D2A1            139         SETB SCLK_PIN
+0146 7F0A            140         MOV R7,#10
+0148 DFFE            141     P02: DJNZ R7,P02
+014A D2A0            142         SETB SDAT_PIN
+014C 22              143         RET
+                     144     
+014D                 145     I2C_YAZ:
+014D 7F08            146         MOV R7,#8
+014F                 147     LOOP:
+014F 33              148         RLC A
+0150 4004            149         JC  ONE
+0152 C2A0            150         CLR SDAT_PIN
+0154 8002            151         SJMP CLK
+0156                 152     ONE:
+0156 D2A0            153         SETB SDAT_PIN
+0158                 154     CLK:
+0158 00              155         NOP
+0159 00              156         NOP
+015A D2A1            157         SETB SCLK_PIN
+015C 7E05            158         MOV R6,#5
+015E DEFE            159     C1: DJNZ R6,C1
+0160 C2A1            160         CLR SCLK_PIN
+0162 7E05            161         MOV R6,#5
+0164 DEFE            162     C2: DJNZ R6,C2
+0166 DFE7            163         DJNZ R7,LOOP
+                     164         
+                     165         ; ACK
+0168 D2A0            166         SETB SDAT_PIN
+016A 00              167         NOP
+016B 00              168         NOP
+016C D2A1            169         SETB SCLK_PIN
+016E 7E05            170         MOV R6,#5
+0170 DEFE            171     A1: DJNZ R6,A1
+0172 C2A1            172         CLR SCLK_PIN
+0174 22              173         RET
+                     174     
+                     175     ; ============================================================
+0175                 176     DELAY:
+0175 7D32            177         MOV R5,#50
+0177 7EFF            178     D1: MOV R6,#255
+0179 DEFE            179     D2: DJNZ R6,D2
+017B DDFA            180         DJNZ R5,D1
+017D 22              181         RET
+                     182     
+                     183     ; ============================================================
+                     184     ; Message Strings
+                     185     ; ============================================================
+017E                 186     MSG_START:
+017E 41447543        187         DB 'ADuC842 Starting...', 13, 10, 0
+0182 38343220                
+0186 53746172                
+A51 MACRO ASSEMBLER  GUGM                                                                 06/20/2026 22:56:07 PAGE     4
+
+018A 74696E67                
+018E 2E2E2E0D                
+0192 0A00                    
+0194                 188     MSG_INIT:
+0194 496E6974        189         DB 'Initializing PCA9685...', 13, 10, 0
+0198 69616C69                
+019C 7A696E67                
+01A0 20504341                
+01A4 39363835                
+01A8 2E2E2E0D                
+01AC 0A00                    
+01AE                 190     MSG_OK:
+01AE 50434139        191         DB 'PCA9685 Initialized!', 13, 10, 0
+01B2 36383520                
+01B6 496E6974                
+01BA 69616C69                
+01BE 7A656421                
+01C2 0D0A00                  
+01C5                 192     MSG_DONE:
+01C5 53657276        193         DB 'Servo moved to 90°', 13, 10, 0
+01C9 6F206D6F                
+01CD 76656420                
+01D1 746F2039                
+01D5 30B00D0A                
+01D9 00                      
+                     194     
+                     195     END
+A51 MACRO ASSEMBLER  GUGM                                                                 06/20/2026 22:56:07 PAGE     5
+
+SYMBOL TABLE LISTING
+------ ----- -------
+
+
+N A M E             T Y P E  V A L U E   ATTRIBUTES
+
+A1 . . . . . . . .  C ADDR   0170H   A   
+C1 . . . . . . . .  C ADDR   015EH   A   
+C2 . . . . . . . .  C ADDR   0164H   A   
+CLK. . . . . . . .  C ADDR   0158H   A   
+D1 . . . . . . . .  C ADDR   0177H   A   
+D2 . . . . . . . .  C ADDR   0179H   A   
+DELAY. . . . . . .  C ADDR   0175H   A   
+I2C_START. . . . .  C ADDR   012DH   A   
+I2C_STOP . . . . .  C ADDR   013EH   A   
+I2C_YAZ. . . . . .  C ADDR   014DH   A   
+LED0_ON_L. . . . .  N NUMB   0006H   A   
+LOOP . . . . . . .  C ADDR   014FH   A   
+MAIN . . . . . . .  C ADDR   0095H   A   
+MODE1_REG. . . . .  N NUMB   0000H   A   
+MSG_DONE . . . . .  C ADDR   01C5H   A   
+MSG_INIT . . . . .  C ADDR   0194H   A   
+MSG_OK . . . . . .  C ADDR   01AEH   A   
+MSG_START. . . . .  C ADDR   017EH   A   
+ONE. . . . . . . .  C ADDR   0156H   A   
+P01. . . . . . . .  C ADDR   0142H   A   
+P02. . . . . . . .  C ADDR   0148H   A   
+P2 . . . . . . . .  D ADDR   00A0H   A   
+PCA_ADDR . . . . .  N NUMB   0080H   A   
+PCA_INIT . . . . .  C ADDR   00B3H   A   
+PRE_SCALE. . . . .  N NUMB   00FEH   A   
+S1 . . . . . . . .  C ADDR   0133H   A   
+S2 . . . . . . . .  C ADDR   0139H   A   
+SBUF . . . . . . .  D ADDR   0099H   A   
+SCLK_PIN . . . . .  B ADDR   00A0H.1 A   
+SCON . . . . . . .  D ADDR   0098H   A   
+SDAT_PIN . . . . .  B ADDR   00A0H.0 A   
+SEND_CHAR. . . . .  C ADDR   00ABH   A   
+SEND_DONE. . . . .  C ADDR   00AAH   A   
+SEND_STRING. . . .  C ADDR   00A0H   A   
+SERVO_90 . . . . .  C ADDR   0108H   A   
+SP . . . . . . . .  D ADDR   0081H   A   
+START. . . . . . .  C ADDR   0080H   A   
+T3CON. . . . . . .  N NUMB   009EH   A   
+T3FD . . . . . . .  N NUMB   009DH   A   
+TI . . . . . . . .  B ADDR   0098H.1 A   
+
+
+REGISTER BANK(S) USED: 0 
+
+
+ASSEMBLY COMPLETE.  0 WARNING(S), 0 ERROR(S)

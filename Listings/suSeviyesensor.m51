@@ -1,0 +1,89 @@
+BL51 BANKED LINKER/LOCATER V6.22.4.0                                                    04/22/2026  20:49:11  PAGE 1
+
+
+BL51 BANKED LINKER/LOCATER V6.22.4.0, INVOKED BY:
+C:\USERS\USER\APPDATA\LOCAL\KEIL_V5\C51\BIN\BL51.EXE .\Objects\suSeviye.obj TO .\Objects\suSeviyesensor PRINT (.\Listing
+>> s\suSeviyesensor.m51) RAMSIZE (256)
+
+
+INPUT MODULES INCLUDED:
+  .\Objects\suSeviye.obj (SUSEVIYE)
+
+
+LINK MAP OF MODULE:  .\Objects\suSeviyesensor (SUSEVIYE)
+
+
+            TYPE    BASE      LENGTH    RELOCATION   SEGMENT NAME
+            -----------------------------------------------------
+
+            * * * * * * *   D A T A   M E M O R Y   * * * * * * *
+            REG     0000H     0008H     ABSOLUTE     "REG BANK 0"
+
+            * * * * * * *   C O D E   M E M O R Y   * * * * * * *
+            CODE    0000H     013CH     ABSOLUTE     
+
+
+
+SYMBOL TABLE OF MODULE:  .\Objects\suSeviyesensor (SUSEVIYE)
+
+  VALUE           TYPE          NAME
+  ----------------------------------
+
+  -------         MODULE        SUSEVIYE
+  N:00EFH         SYMBOL        ADCCON1
+  N:00D8H         SYMBOL        ADCCON2
+  N:00DAH         SYMBOL        ADCDATAH
+  N:00D9H         SYMBOL        ADCDATAL
+  N:00DFH         SYMBOL        ADCI
+  C:0130H         SYMBOL        DELAY
+  C:0133H         SYMBOL        DLY1
+  C:0131H         SYMBOL        DLY2
+  C:010FH         SYMBOL        LOOP
+  C:0100H         SYMBOL        MAIN
+  C:0128H         SYMBOL        OKUMA
+  D:0099H         SYMBOL        SBUF
+  D:0098H         SYMBOL        SCON
+  N:00DCH         SYMBOL        SCONV
+  N:009EH         SYMBOL        T3CON
+  N:009DH         SYMBOL        T3FD
+  B:0098H.1       SYMBOL        TI
+  C:0000H         LINE#         14
+  C:0100H         LINE#         18
+  C:0103H         LINE#         19
+  C:0106H         LINE#         21
+  C:0109H         LINE#         22
+  C:010CH         LINE#         24
+  C:010FH         LINE#         27
+  C:0111H         LINE#         28
+  C:0114H         LINE#         29
+  C:0116H         LINE#         32
+  C:0118H         LINE#         33
+  C:011AH         LINE#         36
+BL51 BANKED LINKER/LOCATER V6.22.4.0                                                  04/22/2026  20:49:11  PAGE 2
+
+
+  C:011CH         LINE#         37
+  C:011EH         LINE#         39
+  C:0120H         LINE#         40
+  C:0122H         LINE#         43
+  C:0124H         LINE#         44
+  C:0126H         LINE#         46
+  C:0128H         LINE#         51
+  C:012AH         LINE#         52
+  C:012DH         LINE#         53
+  C:012FH         LINE#         54
+  C:0130H         LINE#         59
+  C:0131H         LINE#         61
+  C:0133H         LINE#         63
+  C:0135H         LINE#         64
+  C:0137H         LINE#         65
+  C:0139H         LINE#         66
+  C:013BH         LINE#         67
+  -------         ENDMOD        SUSEVIYE
+
+******************************************************************************
+* RESTRICTED VERSION WITH 0800H BYTE CODE SIZE LIMIT; USED: 003EH BYTE ( 3%) *
+******************************************************************************
+
+Program Size: data=8.0 xdata=0 code=316
+LINK/LOCATE RUN COMPLETE.  0 WARNING(S),  0 ERROR(S)

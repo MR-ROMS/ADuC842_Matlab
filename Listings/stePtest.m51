@@ -1,0 +1,73 @@
+BL51 BANKED LINKER/LOCATER V6.22.4.0                                                    05/13/2026  01:12:38  PAGE 1
+
+
+BL51 BANKED LINKER/LOCATER V6.22.4.0, INVOKED BY:
+C:\USERS\USER\APPDATA\LOCAL\KEIL_V5\C51\BIN\BL51.EXE .\Objects\stepTest.obj TO .\Objects\stePtest PRINT (.\Listings\steP
+>> test.m51) RAMSIZE (256)
+
+
+INPUT MODULES INCLUDED:
+  .\Objects\stepTest.obj (STEPTEST)
+
+
+LINK MAP OF MODULE:  .\Objects\stePtest (STEPTEST)
+
+
+            TYPE    BASE      LENGTH    RELOCATION   SEGMENT NAME
+            -----------------------------------------------------
+
+            * * * * * * *   D A T A   M E M O R Y   * * * * * * *
+            REG     0000H     0008H     ABSOLUTE     "REG BANK 0"
+
+            * * * * * * *   C O D E   M E M O R Y   * * * * * * *
+            CODE    0000H     012FH     ABSOLUTE     
+
+
+
+SYMBOL TABLE OF MODULE:  .\Objects\stePtest (STEPTEST)
+
+  VALUE           TYPE          NAME
+  ----------------------------------
+
+  -------         MODULE        STEPTEST
+  C:0126H         SYMBOL        D1
+  C:0124H         SYMBOL        D2
+  C:0122H         SYMBOL        DELAY
+  C:0100H         SYMBOL        MAIN
+  D:00A0H         SYMBOL        P2
+  D:0098H         SYMBOL        SCON
+  N:009EH         SYMBOL        T3CON
+  N:009DH         SYMBOL        T3FD
+  C:010CH         SYMBOL        TEST
+  C:0000H         LINE#         8
+  C:0100H         LINE#         16
+  C:0103H         LINE#         17
+  C:0106H         LINE#         18
+  C:0109H         LINE#         19
+  C:010CH         LINE#         22
+  C:010FH         LINE#         23
+  C:0111H         LINE#         25
+  C:0114H         LINE#         26
+  C:0116H         LINE#         28
+  C:0119H         LINE#         29
+  C:011BH         LINE#         31
+  C:011EH         LINE#         32
+  C:0120H         LINE#         33
+  C:0122H         LINE#         37
+  C:0124H         LINE#         38
+  C:0126H         LINE#         39
+  C:0128H         LINE#         40
+  C:012AH         LINE#         41
+  C:012CH         LINE#         42
+BL51 BANKED LINKER/LOCATER V6.22.4.0                                                  05/13/2026  01:12:38  PAGE 2
+
+
+  C:012EH         LINE#         43
+  -------         ENDMOD        STEPTEST
+
+******************************************************************************
+* RESTRICTED VERSION WITH 0800H BYTE CODE SIZE LIMIT; USED: 0032H BYTE ( 2%) *
+******************************************************************************
+
+Program Size: data=8.0 xdata=0 code=303
+LINK/LOCATE RUN COMPLETE.  0 WARNING(S),  0 ERROR(S)

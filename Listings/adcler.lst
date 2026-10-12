@@ -1,0 +1,83 @@
+A51 MACRO ASSEMBLER  ADCLER                                                               03/01/2026 22:45:00 PAGE     1
+
+
+MACRO ASSEMBLER A51 V8.2.7.0
+OBJECT MODULE PLACED IN .\Objects\adcler.obj
+ASSEMBLER INVOKED BY: C:\Users\User\AppData\Local\Keil_v5\C51\BIN\A51.EXE adcler.a51 SET(SMALL) DEBUG PRINT(.\Listings\a
+                      dcler.lst) OBJECT(.\Objects\adcler.obj) EP
+
+LOC  OBJ            LINE     SOURCE
+
+                       1     $mod51 
+  00DC                 2             SCONV    EQU 0DCH
+  00DF                 3             ADCI     EQU 0DFH
+  00EF                 4             ADCCON1  EQU 0xEF
+  00D8                 5             ADCCON2  EQU 0xD8
+  00D9                 6             ADCDATAL EQU 0xD9
+  00DA                 7             ADCDATAH EQU 0xDA
+  009D                 8             T3FD     EQU 0x9D
+  009E                 9             T3CON    EQU 0x9E
+  00AE                10             EADC     EQU 0xAE
+                      11                     
+----                  12             CSEG
+                      13                     
+0000                  14                     ORG 0000H
+0000 2100             15                             JMP MAIN
+0100                  16                     ORG 0100H
+0100                  17                             MAIN: 
+0100 75EF8C           18                             MOV ADCCON1, #8CH; 1 0 0 0 1 1 0 0 --> DAHILI REFERANS, CLK 32-> TA
+                             VSIYE EDILEN
+0103 75D801           19                             MOV ADCCON2, #01H; 0 0 0 0 0 0 0 1--> KANAL SECIMI
+                      20                             
+0106                  21                             OKU:
+0106 D2DC             22                             SETB SCONV;
+0108 30DFFD           23                             JNB ADCI, $
+010B C2DF             24                             CLR ADCI
+010D ACDA             25                             MOV R4, ADCDATAH;
+010F ADD9             26                             MOV R5, ADCDATAL;
+                      27                 
+0111 53040F           28                 ANL 04H, #0FH;
+0114 7401             29                 MOV A, #01H;
+0116 311A             30                             CALL DELAY
+0118 80EC             31                             JMP OKU
+                      32                             
+                      33                             
+011A                  34                             DELAY: 
+011A FD               35                             MOV R5,A
+011B 7F90             36                             DLY2: MOV R7, #090H;
+011D 7EFF             37                             DLY1: MOV R6, #0FFH
+011F DEFE             38                             DJNZ R6,$
+0121 DFFA             39                             DJNZ R7, DLY1
+0123 DDF6             40                             DJNZ R5, DLY2
+0125 22               41                             RET
+                      42                             END
+                                                     
+                                                     
+A51 MACRO ASSEMBLER  ADCLER                                                               03/01/2026 22:45:00 PAGE     2
+
+SYMBOL TABLE LISTING
+------ ----- -------
+
+
+N A M E             T Y P E  V A L U E   ATTRIBUTES
+
+ADCCON1. . . . . .  N NUMB   00EFH   A   
+ADCCON2. . . . . .  N NUMB   00D8H   A   
+ADCDATAH . . . . .  N NUMB   00DAH   A   
+ADCDATAL . . . . .  N NUMB   00D9H   A   
+ADCI . . . . . . .  N NUMB   00DFH   A   
+DELAY. . . . . . .  C ADDR   011AH   A   
+DLY1 . . . . . . .  C ADDR   011DH   A   
+DLY2 . . . . . . .  C ADDR   011BH   A   
+EADC . . . . . . .  N NUMB   00AEH   A   
+MAIN . . . . . . .  C ADDR   0100H   A   
+OKU. . . . . . . .  C ADDR   0106H   A   
+SCONV. . . . . . .  N NUMB   00DCH   A   
+T3CON. . . . . . .  N NUMB   009EH   A   
+T3FD . . . . . . .  N NUMB   009DH   A   
+
+
+REGISTER BANK(S) USED: 0 
+
+
+ASSEMBLY COMPLETE.  0 WARNING(S), 0 ERROR(S)

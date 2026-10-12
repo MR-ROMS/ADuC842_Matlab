@@ -1,0 +1,86 @@
+A51 MACRO ASSEMBLER  ADCTRY                                                               04/22/2026 14:02:56 PAGE     1
+
+
+MACRO ASSEMBLER A51 V8.2.7.0
+OBJECT MODULE PLACED IN .\Objects\adcTry.obj
+ASSEMBLER INVOKED BY: C:\Users\User\AppData\Local\Keil_v5\C51\BIN\A51.EXE adcTry.a51 SET(SMALL) DEBUG PRINT(.\Listings\a
+                      dcTry.lst) OBJECT(.\Objects\adcTry.obj) EP
+
+LOC  OBJ            LINE     SOURCE
+
+                       1     $mod51 
+  009E                 2     T3CON   EQU 09EH
+  009D                 3     T3FD    EQU 09DH
+                       4     
+----                   5     CSEG
+0000                   6         ORG 0000H
+0000 2100              7         JMP MAIN
+0100                   8         ORG 0100H
+                       9     
+0100                  10     MAIN:
+0100 759D2D           11             MOV T3FD,  #2DH
+0103 759E86           12             MOV T3CON, #086H
+0106 759850           13             MOV SCON,  #50H
+                      14     
+0109                  15     LOOP:
+                      16             ; send 0xAA sync
+0109 74AA             17             MOV  A, #0AAH
+010B 3127             18             ACALL SERI_GONDER
+                      19     
+                      20             ; send P1.0 current state
+010D E590             21             MOV  A, P1
+010F 3127             22             ACALL SERI_GONDER
+                      23     
+                      24             ; pull P1.0 LOW
+0111 C290             25             CLR  P1.0
+                      26     
+                      27             ; small delay
+0113 7F64             28             MOV  R7, #100
+0115 7EFF             29     DLY1:   MOV  R6, #255
+0117 DEFE             30     DLY2:   DJNZ R6, DLY2
+0119 DFFA             31             DJNZ R7, DLY1
+                      32     
+                      33             ; release P1.0 HIGH
+011B D290             34             SETB P1.0
+                      35     
+                      36             ; delay
+011D 7F64             37             MOV  R7, #100
+011F 7EFF             38     DLY3:   MOV  R6, #255
+0121 DEFE             39     DLY4:   DJNZ R6, DLY4
+0123 DFFA             40             DJNZ R7, DLY3
+                      41     
+0125 80E2             42             SJMP LOOP
+                      43     
+0127                  44     SERI_GONDER:
+0127 F599             45             MOV  SBUF, A
+0129 3099FD           46             JNB  TI, $
+012C C299             47             CLR  TI
+012E 22               48             RET
+                      49     END
+A51 MACRO ASSEMBLER  ADCTRY                                                               04/22/2026 14:02:56 PAGE     2
+
+SYMBOL TABLE LISTING
+------ ----- -------
+
+
+N A M E             T Y P E  V A L U E   ATTRIBUTES
+
+DLY1 . . . . . . .  C ADDR   0115H   A   
+DLY2 . . . . . . .  C ADDR   0117H   A   
+DLY3 . . . . . . .  C ADDR   011FH   A   
+DLY4 . . . . . . .  C ADDR   0121H   A   
+LOOP . . . . . . .  C ADDR   0109H   A   
+MAIN . . . . . . .  C ADDR   0100H   A   
+P1 . . . . . . . .  D ADDR   0090H   A   
+SBUF . . . . . . .  D ADDR   0099H   A   
+SCON . . . . . . .  D ADDR   0098H   A   
+SERI_GONDER. . . .  C ADDR   0127H   A   
+T3CON. . . . . . .  N NUMB   009EH   A   
+T3FD . . . . . . .  N NUMB   009DH   A   
+TI . . . . . . . .  B ADDR   0098H.1 A   
+
+
+REGISTER BANK(S) USED: 0 
+
+
+ASSEMBLY COMPLETE.  0 WARNING(S), 0 ERROR(S)

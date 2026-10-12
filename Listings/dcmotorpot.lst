@@ -1,0 +1,40 @@
+A51 MACRO ASSEMBLER  DCMOTORPOT                                                           05/07/2026 14:07:36 PAGE     1
+
+
+MACRO ASSEMBLER A51 V8.2.7.0
+OBJECT MODULE PLACED IN .\Objects\dcmotorpot.obj
+ASSEMBLER INVOKED BY: C:\Users\User\AppData\Local\Keil_v5\C51\BIN\A51.EXE dcmotorpot.a51 SET(SMALL) DEBUG PRINT(.\Listin
+                      gs\dcmotorpot.lst) OBJECT(.\Objects\dcmotorpot.obj) EP
+
+LOC  OBJ            LINE     SOURCE
+
+                       1     $mod51 
+----                   2     CSEG
+0000                   3         ORG 0000H
+0000 2100              4         JMP MAIN
+0100                   5         ORG 0100H
+                       6     
+0100                   7     MAIN:
+                       8     
+0100 C2A1              9     CLR  P2.1
+0102 D2A0             10     SETB P2.0
+0104 80FE             11     JMP  $
+                      12     
+                      13     
+                      14     END
+A51 MACRO ASSEMBLER  DCMOTORPOT                                                           05/07/2026 14:07:36 PAGE     2
+
+SYMBOL TABLE LISTING
+------ ----- -------
+
+
+N A M E             T Y P E  V A L U E   ATTRIBUTES
+
+MAIN . . . . . . .  C ADDR   0100H   A   
+P2 . . . . . . . .  D ADDR   00A0H   A   
+
+
+REGISTER BANK(S) USED: 0 
+
+
+ASSEMBLY COMPLETE.  0 WARNING(S), 0 ERROR(S)

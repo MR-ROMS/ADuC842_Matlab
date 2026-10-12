@@ -1,0 +1,79 @@
+BL51 BANKED LINKER/LOCATER V6.22.4.0                                                    04/22/2026  14:02:56  PAGE 1
+
+
+BL51 BANKED LINKER/LOCATER V6.22.4.0, INVOKED BY:
+C:\USERS\USER\APPDATA\LOCAL\KEIL_V5\C51\BIN\BL51.EXE .\Objects\adcTry.obj TO .\Objects\adcTry PRINT (.\Listings\adcTry.m
+>> 51) RAMSIZE (256)
+
+
+INPUT MODULES INCLUDED:
+  .\Objects\adcTry.obj (ADCTRY)
+
+
+LINK MAP OF MODULE:  .\Objects\adcTry (ADCTRY)
+
+
+            TYPE    BASE      LENGTH    RELOCATION   SEGMENT NAME
+            -----------------------------------------------------
+
+            * * * * * * *   D A T A   M E M O R Y   * * * * * * *
+            REG     0000H     0008H     ABSOLUTE     "REG BANK 0"
+
+            * * * * * * *   C O D E   M E M O R Y   * * * * * * *
+            CODE    0000H     012FH     ABSOLUTE     
+
+
+
+SYMBOL TABLE OF MODULE:  .\Objects\adcTry (ADCTRY)
+
+  VALUE           TYPE          NAME
+  ----------------------------------
+
+  -------         MODULE        ADCTRY
+  C:0115H         SYMBOL        DLY1
+  C:0117H         SYMBOL        DLY2
+  C:011FH         SYMBOL        DLY3
+  C:0121H         SYMBOL        DLY4
+  C:0109H         SYMBOL        LOOP
+  C:0100H         SYMBOL        MAIN
+  D:0090H         SYMBOL        P1
+  D:0099H         SYMBOL        SBUF
+  D:0098H         SYMBOL        SCON
+  C:0127H         SYMBOL        SERI_GONDER
+  N:009EH         SYMBOL        T3CON
+  N:009DH         SYMBOL        T3FD
+  B:0098H.1       SYMBOL        TI
+  C:0000H         LINE#         7
+  C:0100H         LINE#         11
+  C:0103H         LINE#         12
+  C:0106H         LINE#         13
+  C:0109H         LINE#         17
+  C:010BH         LINE#         18
+  C:010DH         LINE#         21
+  C:010FH         LINE#         22
+  C:0111H         LINE#         25
+  C:0113H         LINE#         28
+  C:0115H         LINE#         29
+  C:0117H         LINE#         30
+  C:0119H         LINE#         31
+  C:011BH         LINE#         34
+  C:011DH         LINE#         37
+  C:011FH         LINE#         38
+BL51 BANKED LINKER/LOCATER V6.22.4.0                                                  04/22/2026  14:02:56  PAGE 2
+
+
+  C:0121H         LINE#         39
+  C:0123H         LINE#         40
+  C:0125H         LINE#         42
+  C:0127H         LINE#         45
+  C:0129H         LINE#         46
+  C:012CH         LINE#         47
+  C:012EH         LINE#         48
+  -------         ENDMOD        ADCTRY
+
+******************************************************************************
+* RESTRICTED VERSION WITH 0800H BYTE CODE SIZE LIMIT; USED: 0031H BYTE ( 2%) *
+******************************************************************************
+
+Program Size: data=8.0 xdata=0 code=303
+LINK/LOCATE RUN COMPLETE.  0 WARNING(S),  0 ERROR(S)

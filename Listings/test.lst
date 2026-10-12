@@ -1,0 +1,95 @@
+A51 MACRO ASSEMBLER  TEST                                                                 05/04/2026 23:33:55 PAGE     1
+
+
+MACRO ASSEMBLER A51 V8.2.7.0
+OBJECT MODULE PLACED IN .\Objects\test.obj
+ASSEMBLER INVOKED BY: C:\Users\User\AppData\Local\Keil_v5\C51\BIN\A51.EXE test.a51 SET(SMALL) DEBUG PRINT(.\Listings\tes
+                      t.lst) OBJECT(.\Objects\test.obj) EP
+
+LOC  OBJ            LINE     SOURCE
+
+                       1     $mod51 
+                       2     ; --- Port/Register Definitions ---
+  009E                 3     T3CON    EQU 09EH
+  009D                 4     T3FD     EQU 09DH
+----                   5     CSEG
+0000                   6         ORG 0000H
+0000 2100              7         JMP MAIN
+0100                   8         ORG 0100H
+0100                   9     MAIN:
+                      10     ;    ; --- 1. INITIALIZATION ---
+                      11     ;    MOV T3FD,  #2DH    ; Timer3 9600 baud
+                      12     ;    MOV T3CON, #86H    
+                      13     ;    MOV SCON, #50H      ; UART 8-bit, REN enabled
+                      14     ;    MOV TMOD, #01H
+                      15         
+0100 75A001           16         MOV P2, #01H   ; check which LED lights
+0103 12011A           17             LCALL DELAY
+0106 75A002           18             MOV P2, #02H
+0109 12011A           19             LCALL DELAY
+010C 75A004           20             MOV P2, #04H
+010F 12011A           21             LCALL DELAY
+0112 75A008           22             MOV P2, #08H
+0115 12011A           23             LCALL DELAY
+0118 80E6             24             JMP MAIN
+                      25             
+                      26     ;TEST:
+                      27     ;    MOV P2, #08H
+                      28     ;    LCALL DELAY
+                      29     ;    MOV P2, #0CH
+                      30     ;    LCALL DELAY
+                      31     ;    MOV P2, #04H
+                      32     ;    LCALL DELAY
+                      33     ;    MOV P2, #06H
+                      34     ;    LCALL DELAY
+                      35     ;    MOV P2, #02H
+                      36     ;    LCALL DELAY
+                      37     ;    MOV P2, #03H
+                      38     ;    LCALL DELAY
+                      39     ;    MOV P2, #01H
+                      40     ;    LCALL DELAY
+                      41     ;    MOV P2, #09H
+                      42     ;    LCALL DELAY
+                      43     ;    SJMP TEST
+                      44     
+                      45     
+                      46     
+                      47             
+                      48     ;       
+011A                  49     DELAY:
+011A 7C02             50         MOV R4, #2       ; outermost loop
+011C 7DFF             51     DLY0: MOV R5, #0FFH   ; middle loop
+011E 7EFF             52     DLY1: MOV R6, #0FFH   ; inner loop
+0120 DEFE             53     DLY2: DJNZ R6, DLY2
+0122 DDFA             54         DJNZ R5, DLY1
+0124 DCF6             55         DJNZ R4, DLY0
+0126 22               56         RET
+                      57     
+A51 MACRO ASSEMBLER  TEST                                                                 05/04/2026 23:33:55 PAGE     2
+
+                      58     
+                      59     
+                      60               
+                      61     END
+A51 MACRO ASSEMBLER  TEST                                                                 05/04/2026 23:33:55 PAGE     3
+
+SYMBOL TABLE LISTING
+------ ----- -------
+
+
+N A M E             T Y P E  V A L U E   ATTRIBUTES
+
+DELAY. . . . . . .  C ADDR   011AH   A   
+DLY0 . . . . . . .  C ADDR   011CH   A   
+DLY1 . . . . . . .  C ADDR   011EH   A   
+DLY2 . . . . . . .  C ADDR   0120H   A   
+MAIN . . . . . . .  C ADDR   0100H   A   
+P2 . . . . . . . .  D ADDR   00A0H   A   
+T3CON. . . . . . .  N NUMB   009EH   A   
+T3FD . . . . . . .  N NUMB   009DH   A   
+
+
+REGISTER BANK(S) USED: 0 
+
+
+ASSEMBLY COMPLETE.  0 WARNING(S), 0 ERROR(S)

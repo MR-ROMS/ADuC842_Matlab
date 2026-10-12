@@ -1,0 +1,267 @@
+A51 MACRO ASSEMBLER  KLAVYE                                                               05/22/2026 16:09:03 PAGE     1
+
+
+MACRO ASSEMBLER A51 V8.2.7.0
+OBJECT MODULE PLACED IN .\Objects\klavye.obj
+ASSEMBLER INVOKED BY: C:\Users\User\AppData\Local\Keil_v5\C51\BIN\A51.EXE klavye.a51 SET(SMALL) DEBUG PRINT(.\Listings\k
+                      lavye.lst) OBJECT(.\Objects\klavye.obj) EP
+
+LOC  OBJ            LINE     SOURCE
+
+                       1     $mod51 
+  00D7                 2     PLLCON DATA 0D7H
+  009E                 3     T3CON  DATA 09EH
+  009D                 4     T3FD   DATA 09DH
+----                   5     CSEG
+0000                   6     ORG 0000H
+0000 2100              7         JMP START
+0100                   8     ORG 0100H
+0100                   9     START:
+0100 759E83           10         MOV T3CON, #083H
+0103 759D2D           11         MOV T3FD,  #02DH
+                      12     
+0106 759850           13         MOV SCON,  #50H
+0109 C299             14         CLR TI
+010B 758000           15         MOV P0,    #00H
+010E 75A0FF           16         MOV P2,    #0FFH
+0111 7800             17         MOV R0,    #00H
+0113                  18     MAIN:
+0113 12023E           19         LCALL DELAY1
+0116 1201F2           20         LCALL KEY4
+0119 E8               21         MOV A, R0
+011A B40104           22         CJNE A, #1, SCAN_NUM
+011D 7800             23         MOV R0, #0
+011F 80F2             24         SJMP MAIN
+0121                  25     SCAN_NUM:
+0121 12023E           26         LCALL DELAY1
+0124 120138           27         LCALL KEY1
+0127 12023E           28         LCALL DELAY1
+012A 120176           29         LCALL KEY2
+012D 12023E           30         LCALL DELAY1
+0130 1201B4           31         LCALL KEY3
+0133 12023E           32         LCALL DELAY1
+0136 80DB             33         SJMP MAIN
+0138                  34     KEY1:
+0138 75A0FF           35         MOV P2, #0FFH
+013B C2A4             36         CLR P2.4
+013D 00               37         NOP
+013E 00               38         NOP
+013F 00               39         NOP
+0140 00               40         NOP
+0141 00               41         NOP
+0142 E5A0             42         MOV A, P2
+0144 540F             43         ANL A, #0FH
+0146 FA               44         MOV R2, A
+0147 BA0F03           45         CJNE R2, #0FH, K1_CHECK
+014A D2A4             46         SETB P2.4
+014C 22               47         RET
+014D                  48     K1_CHECK:
+014D BA0E07           49         CJNE R2, #14, K1_2
+0150 7431             50         MOV A, #'1'
+0152 120236           51         LCALL UART_YAZ
+0155 801C             52         SJMP K1_END
+0157                  53     K1_2:
+0157 BA0D07           54         CJNE R2, #13, K1_3
+015A 7434             55         MOV A, #'4'
+015C 120236           56         LCALL UART_YAZ
+015F 8012             57         SJMP K1_END
+A51 MACRO ASSEMBLER  KLAVYE                                                               05/22/2026 16:09:03 PAGE     2
+
+0161                  58     K1_3:
+0161 BA0B07           59         CJNE R2, #11, K1_4
+0164 7437             60         MOV A, #'7'
+0166 120236           61         LCALL UART_YAZ
+0169 8008             62         SJMP K1_END
+016B                  63     K1_4:
+016B BA0705           64         CJNE R2, #7, K1_END
+016E 742A             65         MOV A, #'*'
+0170 120236           66         LCALL UART_YAZ
+0173                  67     K1_END:
+0173 D2A4             68         SETB P2.4
+0175 22               69         RET
+0176                  70     KEY2:
+0176 75A0FF           71         MOV P2, #0FFH
+0179 C2A5             72         CLR P2.5
+017B 00               73         NOP
+017C 00               74         NOP
+017D 00               75         NOP
+017E 00               76         NOP
+017F 00               77         NOP
+0180 E5A0             78         MOV A, P2
+0182 540F             79         ANL A, #0FH
+0184 FA               80         MOV R2, A
+0185 BA0F03           81         CJNE R2, #0FH, K2_CHECK
+0188 D2A5             82         SETB P2.5
+018A 22               83         RET
+018B                  84     K2_CHECK:
+018B BA0E07           85         CJNE R2, #14, K2_2
+018E 7432             86         MOV A, #'2'
+0190 120236           87         LCALL UART_YAZ
+0193 801C             88         SJMP K2_END
+0195                  89     K2_2:
+0195 BA0D07           90         CJNE R2, #13, K2_3
+0198 7435             91         MOV A, #'5'
+019A 120236           92         LCALL UART_YAZ
+019D 8012             93         SJMP K2_END
+019F                  94     K2_3:
+019F BA0B07           95         CJNE R2, #11, K2_4
+01A2 7438             96         MOV A, #'8'
+01A4 120236           97         LCALL UART_YAZ
+01A7 8008             98         SJMP K2_END
+01A9                  99     K2_4:
+01A9 BA0705          100         CJNE R2, #7, K2_END
+01AC 7430            101         MOV A, #'0'
+01AE 120236          102         LCALL UART_YAZ
+01B1                 103     K2_END:
+01B1 D2A5            104         SETB P2.5
+01B3 22              105         RET
+01B4                 106     KEY3:
+01B4 75A0FF          107         MOV P2, #0FFH
+01B7 C2A6            108         CLR P2.6
+01B9 00              109         NOP
+01BA 00              110         NOP
+01BB 00              111         NOP
+01BC 00              112         NOP
+01BD 00              113         NOP
+01BE E5A0            114         MOV A, P2
+01C0 540F            115         ANL A, #0FH
+01C2 FA              116         MOV R2, A
+01C3 BA0F03          117         CJNE R2, #0FH, K3_CHECK
+01C6 D2A6            118         SETB P2.6
+01C8 22              119         RET
+01C9                 120     K3_CHECK:
+01C9 BA0E07          121         CJNE R2, #14, K3_2
+01CC 7433            122         MOV A, #'3'
+01CE 120236          123         LCALL UART_YAZ
+A51 MACRO ASSEMBLER  KLAVYE                                                               05/22/2026 16:09:03 PAGE     3
+
+01D1 801C            124         SJMP K3_END
+01D3                 125     K3_2:
+01D3 BA0D07          126         CJNE R2, #13, K3_3
+01D6 7436            127         MOV A, #'6'
+01D8 120236          128         LCALL UART_YAZ
+01DB 8012            129         SJMP K3_END
+01DD                 130     K3_3:
+01DD BA0B07          131         CJNE R2, #11, K3_4
+01E0 7439            132         MOV A, #'9'
+01E2 120236          133         LCALL UART_YAZ
+01E5 8008            134         SJMP K3_END
+01E7                 135     K3_4:
+01E7 BA0705          136         CJNE R2, #7, K3_END
+01EA 7423            137         MOV A, #'#'
+01EC 120236          138         LCALL UART_YAZ
+01EF                 139     K3_END:
+01EF D2A6            140         SETB P2.6
+01F1 22              141         RET
+01F2                 142     KEY4:
+01F2 75A0FF          143         MOV P2, #0FFH
+01F5 C2A7            144         CLR P2.7
+01F7 00              145         NOP
+01F8 00              146         NOP
+01F9 00              147         NOP
+01FA 00              148         NOP
+01FB 00              149         NOP
+01FC E5A0            150         MOV A, P2
+01FE 540F            151         ANL A, #0FH
+0200 FA              152         MOV R2, A
+0201 BA0F03          153         CJNE R2, #0FH, K4_CHECK
+0204 D2A7            154         SETB P2.7
+0206 22              155         RET
+0207                 156     K4_CHECK:
+0207 7801            157         MOV R0, #1
+0209 BA0E07          158         CJNE R2, #14, K4_2
+020C 7441            159         MOV A, #'A'
+020E 120236          160         LCALL UART_YAZ
+0211 8020            161         SJMP K4_END
+0213                 162     K4_2:
+0213 BA0407          163         CJNE R2, #4, K4_3
+0216 7442            164         MOV A, #'B'
+0218 120236          165         LCALL UART_YAZ
+021B 8016            166         SJMP K4_END
+021D                 167     K4_3:
+021D BA0807          168         CJNE R2, #8, K4_4
+0220 7443            169         MOV A, #'C'
+0222 120236          170         LCALL UART_YAZ
+0225 800C            171         SJMP K4_END
+0227                 172     K4_4:
+0227 BA0707          173         CJNE R2, #7, K4_MISS
+022A 7444            174         MOV A, #'D'
+022C 120236          175         LCALL UART_YAZ
+022F 8002            176         SJMP K4_END
+0231                 177     K4_MISS:
+0231 7800            178         MOV R0, #0
+0233                 179     K4_END:
+0233 D2A7            180         SETB P2.7
+0235 22              181         RET
+0236                 182     UART_YAZ:
+0236 F599            183         MOV SBUF, A
+0238                 184     WAIT_TI:
+0238 3099FD          185         JNB TI, WAIT_TI
+023B C299            186         CLR TI
+023D 22              187         RET
+023E                 188     DELAY1:
+023E 7964            189         MOV R1, #100
+A51 MACRO ASSEMBLER  KLAVYE                                                               05/22/2026 16:09:03 PAGE     4
+
+0240                 190     DLY1:
+0240 7BC8            191         MOV R3, #200
+0242                 192     DLY2:
+0242 DBFE            193         DJNZ R3, DLY2
+0244 D9FA            194         DJNZ R1, DLY1
+0246 22              195         RET
+                     196     END
+A51 MACRO ASSEMBLER  KLAVYE                                                               05/22/2026 16:09:03 PAGE     5
+
+SYMBOL TABLE LISTING
+------ ----- -------
+
+
+N A M E             T Y P E  V A L U E   ATTRIBUTES
+
+DELAY1 . . . . . .  C ADDR   023EH   A   
+DLY1 . . . . . . .  C ADDR   0240H   A   
+DLY2 . . . . . . .  C ADDR   0242H   A   
+K1_2 . . . . . . .  C ADDR   0157H   A   
+K1_3 . . . . . . .  C ADDR   0161H   A   
+K1_4 . . . . . . .  C ADDR   016BH   A   
+K1_CHECK . . . . .  C ADDR   014DH   A   
+K1_END . . . . . .  C ADDR   0173H   A   
+K2_2 . . . . . . .  C ADDR   0195H   A   
+K2_3 . . . . . . .  C ADDR   019FH   A   
+K2_4 . . . . . . .  C ADDR   01A9H   A   
+K2_CHECK . . . . .  C ADDR   018BH   A   
+K2_END . . . . . .  C ADDR   01B1H   A   
+K3_2 . . . . . . .  C ADDR   01D3H   A   
+K3_3 . . . . . . .  C ADDR   01DDH   A   
+K3_4 . . . . . . .  C ADDR   01E7H   A   
+K3_CHECK . . . . .  C ADDR   01C9H   A   
+K3_END . . . . . .  C ADDR   01EFH   A   
+K4_2 . . . . . . .  C ADDR   0213H   A   
+K4_3 . . . . . . .  C ADDR   021DH   A   
+K4_4 . . . . . . .  C ADDR   0227H   A   
+K4_CHECK . . . . .  C ADDR   0207H   A   
+K4_END . . . . . .  C ADDR   0233H   A   
+K4_MISS. . . . . .  C ADDR   0231H   A   
+KEY1 . . . . . . .  C ADDR   0138H   A   
+KEY2 . . . . . . .  C ADDR   0176H   A   
+KEY3 . . . . . . .  C ADDR   01B4H   A   
+KEY4 . . . . . . .  C ADDR   01F2H   A   
+MAIN . . . . . . .  C ADDR   0113H   A   
+P0 . . . . . . . .  D ADDR   0080H   A   
+P2 . . . . . . . .  D ADDR   00A0H   A   
+PLLCON . . . . . .  D ADDR   00D7H   A   
+SBUF . . . . . . .  D ADDR   0099H   A   
+SCAN_NUM . . . . .  C ADDR   0121H   A   
+SCON . . . . . . .  D ADDR   0098H   A   
+START. . . . . . .  C ADDR   0100H   A   
+T3CON. . . . . . .  D ADDR   009EH   A   
+T3FD . . . . . . .  D ADDR   009DH   A   
+TI . . . . . . . .  B ADDR   0098H.1 A   
+UART_YAZ . . . . .  C ADDR   0236H   A   
+WAIT_TI. . . . . .  C ADDR   0238H   A   
+
+
+REGISTER BANK(S) USED: 0 
+
+
+ASSEMBLY COMPLETE.  0 WARNING(S), 0 ERROR(S)

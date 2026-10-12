@@ -1,0 +1,683 @@
+A51 MACRO ASSEMBLER  ROBOTPROJESI                                                         06/23/2026 16:08:38 PAGE     1
+
+
+MACRO ASSEMBLER A51 V8.2.7.0
+OBJECT MODULE PLACED IN .\Objects\robotProjesi.obj
+ASSEMBLER INVOKED BY: C:\Users\User\AppData\Local\Keil_v5\C51\BIN\A51.EXE robotProjesi.a51 SET(SMALL) DEBUG PRINT(.\List
+                      ings\robotProjesi.lst) OBJECT(.\Objects\robotProjesi.obj) EP
+
+LOC  OBJ            LINE     SOURCE
+
+                       1     $mod51 
+                       2     ; ADuC842 + PCA9685 + L298N - 5 Servos + 2 DC Motors
+                       3     ; MATCHES MATLAB GUI
+                       4     
+                       5     ;I2C PINS (P3.2, P3.3)
+  00B2                 6     SDATA BIT P3.2
+  00B3                 7     SCLOCK BIT P3.3
+                       8     
+                       9     ;DC MOTOR 1 PINS (L298N)
+  00A0                10     ENA1 BIT P2.0
+  00A1                11     IN1_1 BIT P2.1
+  00A2                12     IN1_2 BIT P2.2
+                      13     
+                      14     ;DC MOTOR 2 PINS (L298N)
+  00A3                15     ENA2 BIT P2.3
+  00A4                16     IN2_1 BIT P2.4
+  00A5                17     IN2_2 BIT P2.5
+                      18     
+                      19     ;DEBUG LED
+  0090                20     LED1 BIT P1.0
+                      21     
+                      22     ;REGISTERS
+  009E                23     T3CON   EQU 09EH
+  009D                24     T3FD    EQU 09DH
+                      25     
+                      26     ;PCA9685 CONSTANTS
+  0080                27     PCA_ADDR    EQU 080H
+  0000                28     MODE1_REG   EQU 000H
+  00FE                29     PRE_SCALE   EQU 0FEH
+  0006                30     LED0_ON_L   EQU 006H
+                      31     
+                      32     ;RAM VARIABLES
+                      33     
+  0030                34     M1_SPEED    DATA 30H
+  0031                35     M2_SPEED    DATA 31H
+  0032                36     M1_DIR      DATA 32H
+  0033                37     M2_DIR      DATA 33H
+  0034                38     SRV1_ANG    DATA 34H
+  0035                39     SRV2_ANG    DATA 35H
+  0036                40     SRV3_ANG    DATA 36H
+  0037                41     SRV4_ANG    DATA 37H
+  0038                42     SRV5_ANG    DATA 38H
+  003A                43     DIV_CNT     DATA 3AH
+                      44     
+----                  45     CSEG
+0000                  46     ORG 0000H
+0000 020060           47         LJMP START
+                      48     
+0060                  49     ORG 0060H
+0060                  50     START:
+0060 75817F           51         MOV SP,#7FH
+                      52         
+0063 753000           53         MOV M1_SPEED, #00H
+0066 753100           54         MOV M2_SPEED, #00H
+0069 753200           55         MOV M1_DIR, #00H
+006C 753300           56         MOV M2_DIR, #00H
+                      57         
+A51 MACRO ASSEMBLER  ROBOTPROJESI                                                         06/23/2026 16:08:38 PAGE     2
+
+006F 759D2D           58         MOV T3FD, #02DH
+0072 759E83           59         MOV T3CON, #083H
+0075 759850           60         MOV SCON, #50H
+                      61         
+0078 C2A0             62         CLR ENA1
+007A C2A3             63         CLR ENA2
+007C C2A1             64         CLR IN1_1
+007E C2A2             65         CLR IN1_2
+0080 C2A4             66         CLR IN2_1
+0082 C2A5             67         CLR IN2_2
+                      68         
+0084 753400           69         MOV SRV1_ANG, #0
+0087 753500           70         MOV SRV2_ANG, #0
+008A 753600           71         MOV SRV3_ANG, #0
+008D 753700           72         MOV SRV4_ANG, #0
+0090 753800           73         MOV SRV5_ANG, #0
+                      74         
+0093 1202C3           75         LCALL PCA_KURULUM
+                      76         
+0096 7803             77         MOV R0, #3
+0098                  78     START_BLINK:
+0098 D290             79         SETB LED1
+009A 120359           80         LCALL BEKLE_05
+009D C290             81         CLR LED1
+009F 120359           82         LCALL BEKLE_05
+00A2 D8F4             83         DJNZ R0, START_BLINK
+                      84     
+                      85     ; MAIN LOOP
+00A4                  86     MAIN:
+00A4 309807           87         JNB RI, MAIN_UPDATE
+00A7 E599             88         MOV A, SBUF
+00A9 C298             89         CLR RI
+00AB 0200B4           90         LJMP CMD_START
+                      91     
+00AE                  92     MAIN_UPDATE:
+00AE 1201C2           93         LCALL UPDATE_ALL
+00B1 0200A4           94         LJMP MAIN
+                      95     
+                      96     ; COMMAND HANDLER - Use LJMP for all branches
+00B4                  97     CMD_START:
+00B4 B44613           98         CJNE A, #'F', CMD_B
+00B7 753200           99         MOV M1_DIR, #00H
+00BA 753300          100         MOV M2_DIR, #00H
+00BD E530            101         MOV A, M1_SPEED
+00BF 7006            102         JNZ CMD_F_EXIT
+00C1 753032          103         MOV M1_SPEED, #50
+00C4 753132          104         MOV M2_SPEED, #50
+00C7                 105     CMD_F_EXIT:
+00C7 02017B          106         LJMP CMD_EXIT
+                     107     
+00CA                 108     CMD_B:
+00CA B44213          109         CJNE A, #'B', CMD_L
+00CD 753201          110         MOV M1_DIR, #01H
+00D0 753301          111         MOV M2_DIR, #01H
+00D3 E530            112         MOV A, M1_SPEED
+00D5 7006            113         JNZ CMD_B_EXIT
+00D7 753032          114         MOV M1_SPEED, #50
+00DA 753132          115         MOV M2_SPEED, #50
+00DD                 116     CMD_B_EXIT:
+00DD 02017B          117         LJMP CMD_EXIT
+                     118     
+00E0                 119     CMD_L:
+00E0 B44C13          120         CJNE A, #'L', CMD_R
+00E3 753201          121         MOV M1_DIR, #01H
+00E6 753300          122         MOV M2_DIR, #00H
+00E9 E530            123         MOV A, M1_SPEED
+A51 MACRO ASSEMBLER  ROBOTPROJESI                                                         06/23/2026 16:08:38 PAGE     3
+
+00EB 7006            124         JNZ CMD_L_EXIT
+00ED 753032          125         MOV M1_SPEED, #50
+00F0 753132          126         MOV M2_SPEED, #50
+00F3                 127     CMD_L_EXIT:
+00F3 02017B          128         LJMP CMD_EXIT
+                     129     
+00F6                 130     CMD_R:
+00F6 B45213          131         CJNE A, #'R', CMD_S
+00F9 753200          132         MOV M1_DIR, #00H
+00FC 753301          133         MOV M2_DIR, #01H
+00FF E530            134         MOV A, M1_SPEED
+0101 7006            135         JNZ CMD_R_EXIT
+0103 753032          136         MOV M1_SPEED, #50
+0106 753132          137         MOV M2_SPEED, #50
+0109                 138     CMD_R_EXIT:
+0109 02017B          139         LJMP CMD_EXIT
+                     140     
+010C                 141     CMD_S:
+010C B4530F          142         CJNE A, #'S', CMD_1
+010F 753000          143         MOV M1_SPEED, #00H
+0112 753100          144         MOV M2_SPEED, #00H
+0115 753200          145         MOV M1_DIR, #00H
+0118 753300          146         MOV M2_DIR, #00H
+011B 02017B          147         LJMP CMD_EXIT
+                     148     
+011E                 149     CMD_1:
+011E B4310C          150         CJNE A, #'1', CMD_2
+0121 309857          151         JNB RI, CMD_EXIT
+0124 E599            152         MOV A, SBUF
+0126 C298            153         CLR RI
+0128 F530            154         MOV M1_SPEED, A
+012A 02017B          155         LJMP CMD_EXIT
+                     156     
+012D                 157     CMD_2:
+012D B4320C          158         CJNE A, #'2', CMD_A
+0130 309848          159         JNB RI, CMD_EXIT
+0133 E599            160         MOV A, SBUF
+0135 C298            161         CLR RI
+0137 F531            162         MOV M2_SPEED, A
+0139 02017B          163         LJMP CMD_EXIT
+                     164     
+013C                 165     CMD_A:
+013C B44103          166         CJNE A, #'A', CMD_H
+013F 02017B          167         LJMP CMD_EXIT
+                     168     
+0142                 169     CMD_H:
+0142 B44812          170         CJNE A, #'H', CMD_X
+0145 75345A          171         MOV SRV1_ANG, #90
+0148 75355A          172         MOV SRV2_ANG, #90
+014B 75365A          173         MOV SRV3_ANG, #90
+014E 75375A          174         MOV SRV4_ANG, #90
+0151 75385A          175         MOV SRV5_ANG, #90
+0154 02017B          176         LJMP CMD_EXIT
+                     177     
+0157                 178     CMD_X:
+0157 B4581B          179         CJNE A, #'X', CMD_SERVO
+015A 753000          180         MOV M1_SPEED, #00H
+015D 753100          181         MOV M2_SPEED, #00H
+0160 753200          182         MOV M1_DIR, #00H
+0163 753300          183         MOV M2_DIR, #00H
+0166 C2A0            184         CLR ENA1
+0168 C2A3            185         CLR ENA2
+016A C2A1            186         CLR IN1_1
+016C C2A2            187         CLR IN1_2
+016E C2A4            188         CLR IN2_1
+0170 C2A5            189         CLR IN2_2
+A51 MACRO ASSEMBLER  ROBOTPROJESI                                                         06/23/2026 16:08:38 PAGE     4
+
+0172 02017B          190         LJMP CMD_EXIT
+                     191     
+0175                 192     CMD_SERVO:
+0175 B45303          193         CJNE A, #'S', CMD_EXIT
+0178 120181          194         LCALL PARSE_SERVO_CMD
+                     195     
+017B                 196     CMD_EXIT:
+017B 1201C2          197         LCALL UPDATE_ALL
+017E 0200A4          198         LJMP MAIN
+                     199     
+                     200     ; PARSE_SERVO_CMD
+0181                 201     PARSE_SERVO_CMD:
+0181 30983D          202         JNB RI, PARSE_EXIT
+0184 E599            203         MOV A, SBUF
+0186 C298            204         CLR RI
+0188 C3              205         CLR C
+0189 9430            206         SUBB A, #'0'
+018B FA              207         MOV R2, A
+                     208         
+018C 7900            209         MOV R1, #0
+018E 7803            210         MOV R0, #3
+0190                 211     PARSE_DIGIT:
+0190 30982E          212         JNB RI, PARSE_EXIT
+0193 E599            213         MOV A, SBUF
+0195 C298            214         CLR RI
+0197 C3              215         CLR C
+0198 9430            216         SUBB A, #'0'
+019A 75F00A          217         MOV B, #10
+019D E9              218         MOV A, R1
+019E A4              219         MUL AB
+019F 28              220         ADD A, R0
+01A0 F9              221         MOV R1, A
+01A1 D8ED            222         DJNZ R0, PARSE_DIGIT
+                     223         
+01A3 EA              224         MOV A, R2
+01A4 B40003          225         CJNE A, #0, PS1
+01A7 8934            226         MOV SRV1_ANG, R1
+01A9 22              227         RET
+01AA                 228     PS1:
+01AA B40103          229         CJNE A, #1, PS2
+01AD 8935            230         MOV SRV2_ANG, R1
+01AF 22              231         RET
+01B0                 232     PS2:
+01B0 B40203          233         CJNE A, #2, PS3
+01B3 8936            234         MOV SRV3_ANG, R1
+01B5 22              235         RET
+01B6                 236     PS3:
+01B6 B40303          237         CJNE A, #3, PS4
+01B9 8937            238         MOV SRV4_ANG, R1
+01BB 22              239         RET
+01BC                 240     PS4:
+01BC B40402          241         CJNE A, #4, PARSE_EXIT
+01BF 8938            242         MOV SRV5_ANG, R1
+01C1                 243     PARSE_EXIT:
+01C1 22              244         RET
+                     245     
+                     246     ; UPDATE_ALL
+01C2                 247     UPDATE_ALL:
+01C2 E534            248         MOV A, SRV1_ANG
+01C4 7900            249         MOV R1, #00H
+01C6 120252          250         LCALL UPDATE_SERVO
+                     251     
+01C9 E535            252         MOV A, SRV2_ANG
+01CB 7901            253         MOV R1, #01H
+01CD 120252          254         LCALL UPDATE_SERVO
+                     255     
+A51 MACRO ASSEMBLER  ROBOTPROJESI                                                         06/23/2026 16:08:38 PAGE     5
+
+01D0 E536            256         MOV A, SRV3_ANG
+01D2 7902            257         MOV R1, #02H
+01D4 120252          258         LCALL UPDATE_SERVO
+                     259     
+01D7 E537            260         MOV A, SRV4_ANG
+01D9 7903            261         MOV R1, #03H
+01DB 120252          262         LCALL UPDATE_SERVO
+                     263     
+01DE E538            264         MOV A, SRV5_ANG
+01E0 7904            265         MOV R1, #04H
+01E2 120252          266         LCALL UPDATE_SERVO
+                     267         
+01E5 1201E9          268         LCALL UPDATE_MOTORS
+01E8 22              269         RET
+                     270     
+                     271     ; UPDATE_MOTORS
+01E9                 272     UPDATE_MOTORS:
+01E9 E530            273         MOV A, M1_SPEED
+01EB 602A            274         JZ  M1_OFF
+                     275         
+01ED E532            276         MOV A, M1_DIR
+01EF 6006            277         JZ  M1_FWD
+01F1 C2A1            278         CLR IN1_1
+01F3 D2A2            279         SETB IN1_2
+01F5 8004            280         SJMP M1_PWM
+01F7                 281     M1_FWD:
+01F7 D2A1            282         SETB IN1_1
+01F9 C2A2            283         CLR IN1_2
+                     284     
+01FB                 285     M1_PWM:
+01FB D2A0            286         SETB ENA1
+01FD A830            287         MOV R0, M1_SPEED
+01FF                 288     M1_ON:
+01FF 790A            289         MOV R1, #10
+0201                 290     M1_ON_LP:
+0201 D9FE            291         DJNZ R1, M1_ON_LP
+0203 D8FA            292         DJNZ R0, M1_ON
+                     293         
+0205 C2A0            294         CLR ENA1
+0207 7464            295         MOV A, #100
+0209 C3              296         CLR C
+020A 9530            297         SUBB A, M1_SPEED
+020C 600F            298         JZ  M2_START
+020E F8              299         MOV R0, A
+020F                 300     M1_OFF_LP:
+020F 790A            301         MOV R1, #10
+0211                 302     M1_OFF_LP2:
+0211 D9FE            303         DJNZ R1, M1_OFF_LP2
+0213 D8FA            304         DJNZ R0, M1_OFF_LP
+0215 8006            305         SJMP M2_START
+                     306     
+0217                 307     M1_OFF:
+0217 C2A0            308         CLR ENA1
+0219 C2A1            309         CLR IN1_1
+021B C2A2            310         CLR IN1_2
+                     311     
+021D                 312     M2_START:
+021D E531            313         MOV A, M2_SPEED
+021F 602A            314         JZ  M2_OFF
+                     315         
+0221 E533            316         MOV A, M2_DIR
+0223 6006            317         JZ  M2_FWD
+0225 C2A4            318         CLR IN2_1
+0227 D2A5            319         SETB IN2_2
+0229 8004            320         SJMP M2_PWM
+022B                 321     M2_FWD:
+A51 MACRO ASSEMBLER  ROBOTPROJESI                                                         06/23/2026 16:08:38 PAGE     6
+
+022B D2A4            322         SETB IN2_1
+022D C2A5            323         CLR IN2_2
+                     324     
+022F                 325     M2_PWM:
+022F D2A3            326         SETB ENA2
+0231 A831            327         MOV R0, M2_SPEED
+0233                 328     M2_ON:
+0233 790A            329         MOV R1, #10
+0235                 330     M2_ON_LP:
+0235 D9FE            331         DJNZ R1, M2_ON_LP
+0237 D8FA            332         DJNZ R0, M2_ON
+                     333         
+0239 C2A3            334         CLR ENA2
+023B 7464            335         MOV A, #100
+023D C3              336         CLR C
+023E 9531            337         SUBB A, M2_SPEED
+0240 600F            338         JZ  M2_DONE
+0242 F8              339         MOV R0, A
+0243                 340     M2_OFF_LP:
+0243 790A            341         MOV R1, #10
+0245                 342     M2_OFF_LP2:
+0245 D9FE            343         DJNZ R1, M2_OFF_LP2
+0247 D8FA            344         DJNZ R0, M2_OFF_LP
+0249 8006            345         SJMP M2_DONE
+                     346     
+024B                 347     M2_OFF:
+024B C2A3            348         CLR ENA2
+024D C2A4            349         CLR IN2_1
+024F C2A5            350         CLR IN2_2
+                     351     
+0251                 352     M2_DONE:
+0251 22              353         RET
+                     354     
+                     355     ; UPDATE_SERVO
+0252                 356     UPDATE_SERVO:
+0252 C0E0            357         PUSH ACC
+                     358         
+0254 E9              359         MOV A, R1
+0255 75F004          360         MOV B, #04H
+0258 A4              361         MUL AB
+0259 2406            362         ADD A, #LED0_ON_L
+025B C0E0            363         PUSH ACC
+                     364         
+025D D0E0            365         POP ACC
+025F D0F0            366         POP B
+                     367         
+0261 E5F0            368         MOV A, B
+0263 75F0CD          369         MOV B, #205
+0266 A4              370         MUL AB
+0267 FA              371         MOV R2, A
+0268 ACF0            372         MOV R4, B
+                     373         
+026A 12029A          374         LCALL DIV_BY_180
+                     375         
+026D EA              376         MOV A, R2
+026E 24CD            377         ADD A, #205
+0270 FA              378         MOV R2, A
+0271 EC              379         MOV A, R4
+0272 3400            380         ADDC A, #00H
+0274 FC              381         MOV R4, A
+                     382         
+0275 D0E0            383         POP ACC
+                     384         
+0277 12030C          385         LCALL I2C_START
+027A 7480            386         MOV A, #PCA_ADDR
+027C 12032C          387         LCALL I2C_YAZ
+A51 MACRO ASSEMBLER  ROBOTPROJESI                                                         06/23/2026 16:08:38 PAGE     7
+
+027F D0E0            388         POP ACC
+0281 12032C          389         LCALL I2C_YAZ
+                     390         
+0284 7400            391         MOV A, #00H
+0286 12032C          392         LCALL I2C_YAZ
+0289 7400            393         MOV A, #00H
+028B 12032C          394         LCALL I2C_YAZ
+028E EA              395         MOV A, R2
+028F 12032C          396         LCALL I2C_YAZ
+0292 EC              397         MOV A, R4
+0293 12032C          398         LCALL I2C_YAZ
+0296 12031D          399         LCALL I2C_STOP
+0299 22              400         RET
+                     401     
+                     402     ; DIV_BY_180
+029A                 403     DIV_BY_180:
+029A 7800            404         MOV R0, #00H
+029C 7900            405         MOV R1, #00H
+029E 753A10          406         MOV DIV_CNT, #16
+                     407     
+02A1                 408     DIV_LOOP:
+02A1 C3              409         CLR C
+02A2 EA              410         MOV A, R2
+02A3 33              411         RLC A
+02A4 FA              412         MOV R2, A
+02A5 EC              413         MOV A, R4
+02A6 33              414         RLC A
+02A7 FC              415         MOV R4, A
+02A8 E8              416         MOV A, R0
+02A9 33              417         RLC A
+02AA F8              418         MOV R0, A
+02AB E9              419         MOV A, R1
+02AC 33              420         RLC A
+02AD F9              421         MOV R1, A
+                     422     
+02AE E8              423         MOV A, R0
+02AF C3              424         CLR C
+02B0 94B4            425         SUBB A, #0B4H
+02B2 FD              426         MOV R5, A
+02B3 E9              427         MOV A, R1
+02B4 9400            428         SUBB A, #00H
+02B6 4007            429         JC  SKIP_SUB
+                     430     
+02B8 F9              431         MOV R1, A
+02B9 ED              432         MOV A, R5
+02BA F8              433         MOV R0, A
+02BB EA              434         MOV A, R2
+02BC 4401            435         ORL A, #01H
+02BE FA              436         MOV R2, A
+                     437     
+02BF                 438     SKIP_SUB:
+02BF D53ADF          439         DJNZ DIV_CNT, DIV_LOOP
+02C2 22              440         RET
+                     441     
+                     442     ; PCA_KURULUM
+02C3                 443     PCA_KURULUM:
+02C3 12030C          444         LCALL I2C_START
+02C6 7480            445         MOV A, #PCA_ADDR
+02C8 12032C          446         LCALL I2C_YAZ
+02CB 7400            447         MOV A, #MODE1_REG
+02CD 12032C          448         LCALL I2C_YAZ
+02D0 7410            449         MOV A, #10H
+02D2 12032C          450         LCALL I2C_YAZ
+02D5 12031D          451         LCALL I2C_STOP
+02D8 120354          452         LCALL BEKLE_01
+                     453     
+A51 MACRO ASSEMBLER  ROBOTPROJESI                                                         06/23/2026 16:08:38 PAGE     8
+
+02DB 12030C          454         LCALL I2C_START
+02DE 7480            455         MOV A, #PCA_ADDR
+02E0 12032C          456         LCALL I2C_YAZ
+02E3 74FE            457         MOV A, #PRE_SCALE
+02E5 12032C          458         LCALL I2C_YAZ
+02E8 7479            459         MOV A, #79H
+02EA 12032C          460         LCALL I2C_YAZ
+02ED 12031D          461         LCALL I2C_STOP
+02F0 120354          462         LCALL BEKLE_01
+                     463     
+02F3 12030C          464         LCALL I2C_START
+02F6 7480            465         MOV A, #PCA_ADDR
+02F8 12032C          466         LCALL I2C_YAZ
+02FB 7400            467         MOV A, #MODE1_REG
+02FD 12032C          468         LCALL I2C_YAZ
+0300 7421            469         MOV A, #21H
+0302 12032C          470         LCALL I2C_YAZ
+0305 12031D          471         LCALL I2C_STOP
+0308 120354          472         LCALL BEKLE_01
+030B 22              473         RET
+                     474     
+                     475     ; I2C ROUTINES
+030C                 476     I2C_START:
+030C D2B2            477         SETB SDATA
+030E D2B3            478         SETB SCLOCK
+0310 7F0A            479         MOV R7, #10
+0312 DFFE            480     S1: DJNZ R7, S1
+0314 C2B2            481         CLR SDATA
+0316 7F0A            482         MOV R7, #10
+0318 DFFE            483     S2: DJNZ R7, S2
+031A C2B3            484         CLR SCLOCK
+031C 22              485         RET
+                     486     
+031D                 487     I2C_STOP:
+031D C2B2            488         CLR SDATA
+031F 7F0A            489         MOV R7, #10
+0321 DFFE            490     D1: DJNZ R7, D1
+0323 D2B3            491         SETB SCLOCK
+0325 7F0A            492         MOV R7, #10
+0327 DFFE            493     D2: DJNZ R7, D2
+0329 D2B2            494         SETB SDATA
+032B 22              495         RET
+                     496     
+032C                 497     I2C_YAZ:
+032C 7F08            498         MOV R7, #8
+032E                 499     L1:
+032E 33              500         RLC A
+032F 4004            501         JC  ONE
+0331 C2B2            502         CLR SDATA
+0333 8002            503         SJMP CLK
+0335                 504     ONE:
+0335 D2B2            505         SETB SDATA
+0337                 506     CLK:
+0337 00              507         NOP
+0338 00              508         NOP
+0339 D2B3            509         SETB SCLOCK
+033B 7E05            510         MOV R6, #5
+033D DEFE            511     H1: DJNZ R6, H1
+033F C2B3            512         CLR SCLOCK
+0341 7E05            513         MOV R6, #5
+0343 DEFE            514     H2: DJNZ R6, H2
+0345 DFE7            515         DJNZ R7, L1
+                     516         
+0347 D2B2            517         SETB SDATA
+0349 00              518         NOP
+034A 00              519         NOP
+A51 MACRO ASSEMBLER  ROBOTPROJESI                                                         06/23/2026 16:08:38 PAGE     9
+
+034B D2B3            520         SETB SCLOCK
+034D 7E05            521         MOV R6, #5
+034F DEFE            522     A1: DJNZ R6, A1
+0351 C2B3            523         CLR SCLOCK
+0353 22              524         RET
+                     525     
+                     526     ; DELAYS
+0354                 527     BEKLE_01:
+0354 7E64            528         MOV R6, #100
+0356 DEFE            529     B01: DJNZ R6, B01
+0358 22              530         RET
+                     531     
+0359                 532     BEKLE_05:
+0359 7D32            533         MOV R5, #50
+035B 7EC8            534     B05_1: MOV R6, #200
+035D DEFE            535     B05_2: DJNZ R6, B05_2
+035F DDFA            536         DJNZ R5, B05_1
+0361 22              537         RET
+                     538     
+                     539     END
+A51 MACRO ASSEMBLER  ROBOTPROJESI                                                         06/23/2026 16:08:38 PAGE    10
+
+SYMBOL TABLE LISTING
+------ ----- -------
+
+
+N A M E             T Y P E  V A L U E   ATTRIBUTES
+
+A1 . . . . . . . .  C ADDR   034FH   A   
+ACC. . . . . . . .  D ADDR   00E0H   A   
+B. . . . . . . . .  D ADDR   00F0H   A   
+B01. . . . . . . .  C ADDR   0356H   A   
+B05_1. . . . . . .  C ADDR   035BH   A   
+B05_2. . . . . . .  C ADDR   035DH   A   
+BEKLE_01 . . . . .  C ADDR   0354H   A   
+BEKLE_05 . . . . .  C ADDR   0359H   A   
+CLK. . . . . . . .  C ADDR   0337H   A   
+CMD_1. . . . . . .  C ADDR   011EH   A   
+CMD_2. . . . . . .  C ADDR   012DH   A   
+CMD_A. . . . . . .  C ADDR   013CH   A   
+CMD_B. . . . . . .  C ADDR   00CAH   A   
+CMD_B_EXIT . . . .  C ADDR   00DDH   A   
+CMD_EXIT . . . . .  C ADDR   017BH   A   
+CMD_F_EXIT . . . .  C ADDR   00C7H   A   
+CMD_H. . . . . . .  C ADDR   0142H   A   
+CMD_L. . . . . . .  C ADDR   00E0H   A   
+CMD_L_EXIT . . . .  C ADDR   00F3H   A   
+CMD_R. . . . . . .  C ADDR   00F6H   A   
+CMD_R_EXIT . . . .  C ADDR   0109H   A   
+CMD_S. . . . . . .  C ADDR   010CH   A   
+CMD_SERVO. . . . .  C ADDR   0175H   A   
+CMD_START. . . . .  C ADDR   00B4H   A   
+CMD_X. . . . . . .  C ADDR   0157H   A   
+D1 . . . . . . . .  C ADDR   0321H   A   
+D2 . . . . . . . .  C ADDR   0327H   A   
+DIV_BY_180 . . . .  C ADDR   029AH   A   
+DIV_CNT. . . . . .  D ADDR   003AH   A   
+DIV_LOOP . . . . .  C ADDR   02A1H   A   
+ENA1 . . . . . . .  B ADDR   00A0H.0 A   
+ENA2 . . . . . . .  B ADDR   00A0H.3 A   
+H1 . . . . . . . .  C ADDR   033DH   A   
+H2 . . . . . . . .  C ADDR   0343H   A   
+I2C_START. . . . .  C ADDR   030CH   A   
+I2C_STOP . . . . .  C ADDR   031DH   A   
+I2C_YAZ. . . . . .  C ADDR   032CH   A   
+IN1_1. . . . . . .  B ADDR   00A0H.1 A   
+IN1_2. . . . . . .  B ADDR   00A0H.2 A   
+IN2_1. . . . . . .  B ADDR   00A0H.4 A   
+IN2_2. . . . . . .  B ADDR   00A0H.5 A   
+L1 . . . . . . . .  C ADDR   032EH   A   
+LED0_ON_L. . . . .  N NUMB   0006H   A   
+LED1 . . . . . . .  B ADDR   0090H.0 A   
+M1_DIR . . . . . .  D ADDR   0032H   A   
+M1_FWD . . . . . .  C ADDR   01F7H   A   
+M1_OFF . . . . . .  C ADDR   0217H   A   
+M1_OFF_LP. . . . .  C ADDR   020FH   A   
+M1_OFF_LP2 . . . .  C ADDR   0211H   A   
+M1_ON. . . . . . .  C ADDR   01FFH   A   
+M1_ON_LP . . . . .  C ADDR   0201H   A   
+M1_PWM . . . . . .  C ADDR   01FBH   A   
+M1_SPEED . . . . .  D ADDR   0030H   A   
+M2_DIR . . . . . .  D ADDR   0033H   A   
+M2_DONE. . . . . .  C ADDR   0251H   A   
+M2_FWD . . . . . .  C ADDR   022BH   A   
+M2_OFF . . . . . .  C ADDR   024BH   A   
+M2_OFF_LP. . . . .  C ADDR   0243H   A   
+M2_OFF_LP2 . . . .  C ADDR   0245H   A   
+M2_ON. . . . . . .  C ADDR   0233H   A   
+A51 MACRO ASSEMBLER  ROBOTPROJESI                                                         06/23/2026 16:08:38 PAGE    11
+
+M2_ON_LP . . . . .  C ADDR   0235H   A   
+M2_PWM . . . . . .  C ADDR   022FH   A   
+M2_SPEED . . . . .  D ADDR   0031H   A   
+M2_START . . . . .  C ADDR   021DH   A   
+MAIN . . . . . . .  C ADDR   00A4H   A   
+MAIN_UPDATE. . . .  C ADDR   00AEH   A   
+MODE1_REG. . . . .  N NUMB   0000H   A   
+ONE. . . . . . . .  C ADDR   0335H   A   
+P1 . . . . . . . .  D ADDR   0090H   A   
+P2 . . . . . . . .  D ADDR   00A0H   A   
+P3 . . . . . . . .  D ADDR   00B0H   A   
+PARSE_DIGIT. . . .  C ADDR   0190H   A   
+PARSE_EXIT . . . .  C ADDR   01C1H   A   
+PARSE_SERVO_CMD. .  C ADDR   0181H   A   
+PCA_ADDR . . . . .  N NUMB   0080H   A   
+PCA_KURULUM. . . .  C ADDR   02C3H   A   
+PRE_SCALE. . . . .  N NUMB   00FEH   A   
+PS1. . . . . . . .  C ADDR   01AAH   A   
+PS2. . . . . . . .  C ADDR   01B0H   A   
+PS3. . . . . . . .  C ADDR   01B6H   A   
+PS4. . . . . . . .  C ADDR   01BCH   A   
+RI . . . . . . . .  B ADDR   0098H.0 A   
+S1 . . . . . . . .  C ADDR   0312H   A   
+S2 . . . . . . . .  C ADDR   0318H   A   
+SBUF . . . . . . .  D ADDR   0099H   A   
+SCLOCK . . . . . .  B ADDR   00B0H.3 A   
+SCON . . . . . . .  D ADDR   0098H   A   
+SDATA. . . . . . .  B ADDR   00B0H.2 A   
+SKIP_SUB . . . . .  C ADDR   02BFH   A   
+SP . . . . . . . .  D ADDR   0081H   A   
+SRV1_ANG . . . . .  D ADDR   0034H   A   
+SRV2_ANG . . . . .  D ADDR   0035H   A   
+SRV3_ANG . . . . .  D ADDR   0036H   A   
+SRV4_ANG . . . . .  D ADDR   0037H   A   
+SRV5_ANG . . . . .  D ADDR   0038H   A   
+START. . . . . . .  C ADDR   0060H   A   
+START_BLINK. . . .  C ADDR   0098H   A   
+T3CON. . . . . . .  N NUMB   009EH   A   
+T3FD . . . . . . .  N NUMB   009DH   A   
+UPDATE_ALL . . . .  C ADDR   01C2H   A   
+UPDATE_MOTORS. . .  C ADDR   01E9H   A   
+UPDATE_SERVO . . .  C ADDR   0252H   A   
+
+
+REGISTER BANK(S) USED: 0 
+
+
+ASSEMBLY COMPLETE.  0 WARNING(S), 0 ERROR(S)

@@ -1,0 +1,152 @@
+A51 MACRO ASSEMBLER  LCDPROG                                                              05/17/2026 23:06:55 PAGE     1
+
+
+MACRO ASSEMBLER A51 V8.2.7.0
+OBJECT MODULE PLACED IN .\Objects\lcdprog.obj
+ASSEMBLER INVOKED BY: C:\Users\User\AppData\Local\Keil_v5\C51\BIN\A51.EXE lcdprog.a51 SET(SMALL) DEBUG PRINT(.\Listings\
+                      lcdprog.lst) OBJECT(.\Objects\lcdprog.obj) EP
+
+LOC  OBJ            LINE     SOURCE
+
+                       1     $mod51 
+                       2     ;calisiyoz
+  00D7                 3     PLLCON EQU 0xD7
+                       4     
+  00A2                 5     EN  EQU P2.2 ; 6 nolu LCD bacagi
+  00A1                 6     RW  EQU P2.1 ; 5 nolu LCD bacagi
+  00A0                 7     RS  EQU P2.0 ; 4 nolu LCD bacagi
+                       8     ; DATA olarak P0 kullanilacak
+                       9     
+0000                  10             ORG 0000H
+0000 75D707           11             MOV PLLCON, #07H
+0003 2100             12             JMP START
+0100                  13             ORG 0100H
+                      14     
+0100                  15     START:
+0100 7438             16             MOV A, #38H
+0102 120184           17             LCALL COMMAND
+0105 740E             18             MOV A, #0EH
+0107 120184           19             LCALL COMMAND
+010A 7406             20             MOV A, #06H
+010C 120184           21             LCALL COMMAND
+010F 1201A0           22             LCALL DELAY
+0112 7438             23             MOV A, #38H
+0114 120184           24             LCALL COMMAND
+0117 740E             25             MOV A, #0EH
+0119 120184           26             LCALL COMMAND
+011C 1201A0           27             LCALL DELAY
+011F 7438             28             MOV A, #38H
+0121 120184           29             LCALL COMMAND
+0124 740E             30             MOV A, #0EH
+0126 120184           31             LCALL COMMAND
+0129 1201A0           32             LCALL DELAY
+012C 740C             33             MOV A, #0CH
+012E 120184           34             LCALL COMMAND
+0131 1201A5           35             LCALL DELAY1
+0134 7401             36             MOV A, #01H
+0136 120184           37             LCALL COMMAND
+0139 1201A5           38             LCALL DELAY1
+                      39     
+013C 7480             40             MOV A, #80H
+013E 120184           41             LCALL COMMAND
+0141 1201A5           42             LCALL DELAY1
+                      43     
+0144 7480             44             MOV A, #80H
+0146 120184           45             LCALL COMMAND
+0149 1201A5           46             LCALL DELAY1
+                      47     
+                      48             ; Write "TARIK" (ASCII hex values)
+014C 7454             49             MOV A, #54H     ; 'T'
+014E 120192           50             LCALL datw
+0151 00               51             NOP
+0152 7441             52             MOV A, #41H     ; 'A'
+0154 120192           53             LCALL datw
+0157 00               54             NOP
+0158 7452             55             MOV A, #52H     ; 'R'
+015A 120192           56             LCALL datw
+015D 00               57             NOP
+A51 MACRO ASSEMBLER  LCDPROG                                                              05/17/2026 23:06:55 PAGE     2
+
+015E 7449             58             MOV A, #49H     ; 'I'
+0160 120192           59             LCALL datw
+0163 00               60             NOP
+0164 744B             61             MOV A, #4BH     ; 'K'
+0166 120192           62             LCALL datw
+0169 00               63             NOP
+                      64     
+016A 8042             65             JMP SON
+                      66     
+                      67             ; (Extra init sequence visible in image 3 - may be alternate path)
+016C 743C             68             MOV A, #3CH
+016E 120184           69             LCALL COMMAND
+0171 1201A5           70             LCALL DELAY1
+0174 743C             71             MOV A, #3CH
+0176 120184           72             LCALL COMMAND
+0179 1201A5           73             LCALL DELAY1
+017C 743C             74             MOV A, #3CH
+017E 120184           75             LCALL COMMAND
+0181 1201A5           76             LCALL DELAY1
+                      77     
+                      78     ;--------------------------------------------------
+0184                  79     COMMAND:
+0184 C2A1             80             CLR RW
+0186 C2A0             81             CLR RS
+0188 D2A2             82             SETB EN
+018A F580             83             MOV P0, A
+018C 1201A0           84             LCALL DELAY
+018F C2A2             85             CLR EN
+0191 22               86             RET
+                      87     
+0192                  88     datw:
+0192 C2A1             89             CLR RW
+0194 D2A0             90             SETB RS
+0196 D2A2             91             SETB EN
+0198 F580             92             MOV P0, A
+019A 1201A0           93             LCALL DELAY
+019D C2A2             94             CLR EN
+019F 22               95             RET
+                      96     
+01A0                  97     DELAY:
+01A0 78FF             98             MOV R0, #255
+01A2                  99     LOOP:
+01A2 D8FE            100             DJNZ R0, LOOP
+01A4 22              101             RET
+                     102     
+01A5                 103     DELAY1:
+01A5 79FF            104             MOV R1, #255
+01A7 7BDC            105     LOOP1:  MOV R3, #220
+01A9 DBFE            106     LOOP2:  DJNZ R3, LOOP2
+01AB D9FA            107             DJNZ R1, LOOP1
+01AD 22              108             RET
+                     109     
+01AE 80FE            110     SON:    JMP $
+                     111     END
+A51 MACRO ASSEMBLER  LCDPROG                                                              05/17/2026 23:06:55 PAGE     3
+
+SYMBOL TABLE LISTING
+------ ----- -------
+
+
+N A M E             T Y P E  V A L U E   ATTRIBUTES
+
+COMMAND. . . . . .  C ADDR   0184H   A   
+DATW . . . . . . .  C ADDR   0192H   A   
+DELAY. . . . . . .  C ADDR   01A0H   A   
+DELAY1 . . . . . .  C ADDR   01A5H   A   
+EN . . . . . . . .  B ADDR   00A0H.2 A   
+LOOP . . . . . . .  C ADDR   01A2H   A   
+LOOP1. . . . . . .  C ADDR   01A7H   A   
+LOOP2. . . . . . .  C ADDR   01A9H   A   
+P0 . . . . . . . .  D ADDR   0080H   A   
+P2 . . . . . . . .  D ADDR   00A0H   A   
+PLLCON . . . . . .  N NUMB   00D7H   A   
+RS . . . . . . . .  B ADDR   00A0H.0 A   
+RW . . . . . . . .  B ADDR   00A0H.1 A   
+SON. . . . . . . .  C ADDR   01AEH   A   
+START. . . . . . .  C ADDR   0100H   A   
+
+
+REGISTER BANK(S) USED: 0 
+
+
+ASSEMBLY COMPLETE.  0 WARNING(S), 0 ERROR(S)

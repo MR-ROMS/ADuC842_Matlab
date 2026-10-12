@@ -1,0 +1,287 @@
+A51 MACRO ASSEMBLER  SICAKLIK                                                             05/15/2026 15:26:16 PAGE     1
+
+
+MACRO ASSEMBLER A51 V8.2.7.0
+OBJECT MODULE PLACED IN .\Objects\sicaklik.obj
+ASSEMBLER INVOKED BY: C:\Users\User\AppData\Local\Keil_v5\C51\BIN\A51.EXE sicaklik.a51 SET(SMALL) DEBUG PRINT(.\Listings
+                      \sicaklik.lst) OBJECT(.\Objects\sicaklik.obj) EP
+
+LOC  OBJ            LINE     SOURCE
+
+                       1     $mod51 
+                       2             ;GRUP 1
+                       3             ;ROMARIC SILANANG DOROBA  : 2110225556
+                       4             ;OGUZ TAHA OZTURK : 2310225059
+  009E                 5     T3CON     DATA  09EH
+  009D                 6     T3FD      DATA  09DH
+                       7     
+  0020                 8     HUM_INT   DATA  20H
+  0021                 9     HUM_DEC   DATA  21H
+  0022                10     TMP_INT   DATA  22H
+  0023                11     TMP_DEC   DATA  23H
+  0024                12     CHECKSUM  DATA  24H
+  0025                13     BIT_CNT   DATA  25H
+  0026                14     BYTE_CNT  DATA  26H
+  0027                15     SHIFT_REG DATA  27H
+  0028                16     BITS_LEFT DATA  28H
+                      17     
+0000                  18               ORG   0000H
+0000 020030           19               LJMP  MAIN
+0030                  20               ORG   0030H
+                      21     
+0030                  22     MAIN:
+0030 75812F           23               MOV   SP,    #2FH
+0033 759E83           24               MOV   T3CON, #083H
+0036 759D2D           25               MOV   T3FD,  #02DH
+0039 759850           26               MOV   SCON,  #050H
+003C D299             27               SETB  TI
+003E D2B4             28               SETB  P3.4
+0040 758901           29               MOV   TMOD,  #01H
+                      30     
+                      31               ; boot delay ~1s
+0043 7FFF             32               MOV   R7,    #0FFH
+0045 7EFF             33     BOOT1:    MOV   R6,    #0FFH
+0047 7D09             34     BOOT2:    MOV   R5,    #09H
+0049 DDFE             35     BOOT3:    DJNZ  R5,    BOOT3
+004B DEFA             36               DJNZ  R6,    BOOT2
+004D DFF6             37               DJNZ  R7,    BOOT1
+                      38     
+004F 02005A           39               LJMP  READ_AGAIN
+                      40     
+0052                  41     UART_SEND:
+0052 F599             42               MOV   SBUF,  A
+0054 3099FD           43     WAIT_TI:  JNB   TI,    WAIT_TI
+0057 C299             44               CLR   TI
+0059 22               45               RET
+                      46     
+005A                  47     READ_AGAIN:
+                      48               ; start pulse ~20ms
+                      49           
+005A C2B4             50               CLR   P3.4
+005C 7904             51               MOV   R1,         #04H
+005E 7F18             52     STRT0:    MOV   R7,         #18H
+0060 7EFF             53     STRT1:    MOV   R6,         #0FFH
+0062 DEFE             54     STRT2:    DJNZ  R6,         STRT2
+0064 DFFA             55               DJNZ  R7,         STRT1
+0066 D9F6             56               DJNZ  R1,         STRT0
+                      57     
+A51 MACRO ASSEMBLER  SICAKLIK                                                             05/15/2026 15:26:16 PAGE     2
+
+                      58               ; release HIGH, wait 30us = 46 cycles 
+0068 D2B4             59               SETB  P3.4
+006A 780B             60               MOV   R0,         #0BH
+006C D8FE             61     REL_DLY:  DJNZ  R0,         REL_DLY
+                      62     
+006E                  63     DHT11_READ:
+006E 752000           64               MOV   HUM_INT,    #00H
+0071 752100           65               MOV   HUM_DEC,    #00H
+0074 752200           66               MOV   TMP_INT,    #00H
+0077 752300           67               MOV   TMP_DEC,    #00H
+007A 752400           68               MOV   CHECKSUM,   #00H
+                      69     
+                      70               ; WAIT_LOW timeout ~10ms = R0=255, R1=60
+007D 793C             71               MOV   R1,         #3CH
+007F 78FF             72     WL_OUTER: MOV   R0,         #0FFH
+0081 30B40B           73     WAIT_LOW: JNB   P3.4,       WL_DONE
+0084 D8FB             74               DJNZ  R0,         WAIT_LOW
+0086 D9F7             75               DJNZ  R1,         WL_OUTER
+0088 74E1             76               MOV   A,          #0E1H
+008A 1152             77               ACALL UART_SEND
+008C 02005A           78               LJMP  READ_AGAIN
+008F                  79     WL_DONE:
+                      80     
+                      81               ; WAIT_HIGH timeout ~10ms
+008F 793C             82               MOV   R1,         #3CH
+0091 78FF             83     WH_OUTER: MOV   R0,         #0FFH
+0093 20B40B           84     WAIT_HIGH:JB    P3.4,       WH_DONE
+0096 D8FB             85               DJNZ  R0,         WAIT_HIGH
+0098 D9F7             86               DJNZ  R1,         WH_OUTER
+009A 74E2             87               MOV   A,          #0E2H
+009C 1152             88               ACALL UART_SEND
+009E 02005A           89               LJMP  READ_AGAIN
+00A1                  90     WH_DONE:
+                      91     
+                      92               ; WAIT_FALL timeout ~10ms
+00A1 793C             93               MOV   R1,         #3CH
+00A3 78FF             94     WF_OUTER: MOV   R0,         #0FFH
+00A5 30B40B           95     WAIT_FALL:JNB   P3.4,       WF_DONE
+00A8 D8FB             96               DJNZ  R0,         WAIT_FALL
+00AA D9F7             97               DJNZ  R1,         WF_OUTER
+00AC 74E3             98               MOV   A,          #0E3H
+00AE 1152             99               ACALL UART_SEND
+00B0 02005A          100               LJMP  READ_AGAIN
+00B3                 101     WF_DONE:
+                     102     
+00B3 752528          103               MOV   BIT_CNT,    #40
+00B6 752600          104               MOV   BYTE_CNT,   #00H
+00B9 752700          105               MOV   SHIFT_REG,  #00H
+00BC 752808          106               MOV   BITS_LEFT,  #08H
+                     107     
+00BF                 108     BIT_READ:
+00BF 793C            109               MOV   R1,         #3CH
+00C1 78FF            110     RW_OUTER: MOV   R0,         #0FFH
+00C3 20B40B          111     RISE_W:   JB    P3.4,       RW_DONE
+00C6 D8FB            112               DJNZ  R0,         RISE_W
+00C8 D9F7            113               DJNZ  R1,         RW_OUTER
+00CA 74E4            114               MOV   A,          #0E4H
+00CC 1152            115               ACALL UART_SEND
+00CE 02005A          116               LJMP  READ_AGAIN
+00D1                 117     RW_DONE:
+                     118     
+                     119               ; sample point ~49us 
+00D1 7818            120               MOV   R0,         #18H
+00D3 D8FE            121     SAMP_DLY: DJNZ  R0,         SAMP_DLY
+00D5 00              122               NOP
+00D6 00              123               NOP
+A51 MACRO ASSEMBLER  SICAKLIK                                                             05/15/2026 15:26:16 PAGE     3
+
+00D7 00              124               NOP
+00D8 00              125               NOP
+                     126     
+00D9 A2B4            127               MOV   C,          P3.4
+00DB E527            128               MOV   A,          SHIFT_REG
+00DD 33              129               RLC   A
+00DE F527            130               MOV   SHIFT_REG,  A
+                     131     
+00E0 793C            132               MOV   R1,         #3CH
+00E2 78FF            133     FW_OUTER: MOV   R0,         #0FFH
+00E4 30B40B          134     FALL_W:   JNB   P3.4,       FW_DONE
+00E7 D8FB            135               DJNZ  R0,         FALL_W
+00E9 D9F7            136               DJNZ  R1,         FW_OUTER
+00EB 74E5            137               MOV   A,          #0E5H
+00ED 1152            138               ACALL UART_SEND
+00EF 02005A          139               LJMP  READ_AGAIN
+00F2                 140     FW_DONE:
+                     141     
+00F2 D5282D          142               DJNZ  BITS_LEFT,  NEXT_BIT
+                     143     
+00F5 E526            144               MOV   A,          BYTE_CNT
+00F7 B40005          145               CJNE  A,          #00H,  CHK1
+00FA 852720          146               MOV   HUM_INT,    SHIFT_REG
+00FD 801B            147               SJMP  BYTE_DONE
+00FF B40105          148     CHK1:     CJNE  A,          #01H,  CHK2
+0102 852721          149               MOV   HUM_DEC,    SHIFT_REG
+0105 8013            150               SJMP  BYTE_DONE
+0107 B40205          151     CHK2:     CJNE  A,          #02H,  CHK3
+010A 852722          152               MOV   TMP_INT,    SHIFT_REG
+010D 800B            153               SJMP  BYTE_DONE
+010F B40305          154     CHK3:     CJNE  A,          #03H,  CHK4
+0112 852723          155               MOV   TMP_DEC,    SHIFT_REG
+0115 8003            156               SJMP  BYTE_DONE
+0117 852724          157     CHK4:     MOV   CHECKSUM,   SHIFT_REG
+                     158     
+011A                 159     BYTE_DONE:
+011A 0526            160               INC   BYTE_CNT
+011C 752700          161               MOV   SHIFT_REG,  #00H
+011F 752808          162               MOV   BITS_LEFT,  #08H
+                     163     
+0122                 164     NEXT_BIT:
+0122 D5259A          165               DJNZ  BIT_CNT,    BIT_READ
+                     166     
+0125 E520            167               MOV   A,          HUM_INT
+0127 2521            168               ADD   A,          HUM_DEC
+0129 2522            169               ADD   A,          TMP_INT
+012B 2523            170               ADD   A,          TMP_DEC
+012D 54FF            171               ANL   A,          #0FFH
+012F B52402          172               CJNE  A,          CHECKSUM, BAD_CS
+0132 8007            173               SJMP  SEND_DATA
+                     174     
+0134                 175     BAD_CS:
+0134 74E6            176               MOV   A,          #0E6H
+0136 1152            177               ACALL UART_SEND
+0138 02005A          178               LJMP  READ_AGAIN
+                     179     
+013B                 180     SEND_DATA:
+013B 74AA            181               MOV   A,          #0AAH
+013D 1152            182               ACALL UART_SEND
+013F E522            183               MOV   A,          TMP_INT
+0141 1152            184               ACALL UART_SEND
+0143 E520            185               MOV   A,          HUM_INT
+0145 1152            186               ACALL UART_SEND
+                     187     
+                     188               ; ~1s delay
+0147 7FFF            189               MOV   R7,         #0FFH
+A51 MACRO ASSEMBLER  SICAKLIK                                                             05/15/2026 15:26:16 PAGE     4
+
+0149 7EFF            190     WAIT1:    MOV   R6,         #0FFH
+014B 7D09            191     WAIT2:    MOV   R5,         #09H
+014D DDFE            192     WAIT3:    DJNZ  R5,         WAIT3
+014F DEFA            193               DJNZ  R6,         WAIT2
+0151 DFF6            194               DJNZ  R7,         WAIT1
+                     195     
+0153 02005A          196               LJMP  READ_AGAIN
+                     197     
+                     198               END
+A51 MACRO ASSEMBLER  SICAKLIK                                                             05/15/2026 15:26:16 PAGE     5
+
+SYMBOL TABLE LISTING
+------ ----- -------
+
+
+N A M E             T Y P E  V A L U E   ATTRIBUTES
+
+BAD_CS . . . . . .  C ADDR   0134H   A   
+BITS_LEFT. . . . .  D ADDR   0028H   A   
+BIT_CNT. . . . . .  D ADDR   0025H   A   
+BIT_READ . . . . .  C ADDR   00BFH   A   
+BOOT1. . . . . . .  C ADDR   0045H   A   
+BOOT2. . . . . . .  C ADDR   0047H   A   
+BOOT3. . . . . . .  C ADDR   0049H   A   
+BYTE_CNT . . . . .  D ADDR   0026H   A   
+BYTE_DONE. . . . .  C ADDR   011AH   A   
+CHECKSUM . . . . .  D ADDR   0024H   A   
+CHK1 . . . . . . .  C ADDR   00FFH   A   
+CHK2 . . . . . . .  C ADDR   0107H   A   
+CHK3 . . . . . . .  C ADDR   010FH   A   
+CHK4 . . . . . . .  C ADDR   0117H   A   
+DHT11_READ . . . .  C ADDR   006EH   A   
+FALL_W . . . . . .  C ADDR   00E4H   A   
+FW_DONE. . . . . .  C ADDR   00F2H   A   
+FW_OUTER . . . . .  C ADDR   00E2H   A   
+HUM_DEC. . . . . .  D ADDR   0021H   A   
+HUM_INT. . . . . .  D ADDR   0020H   A   
+MAIN . . . . . . .  C ADDR   0030H   A   
+NEXT_BIT . . . . .  C ADDR   0122H   A   
+P3 . . . . . . . .  D ADDR   00B0H   A   
+READ_AGAIN . . . .  C ADDR   005AH   A   
+REL_DLY. . . . . .  C ADDR   006CH   A   
+RISE_W . . . . . .  C ADDR   00C3H   A   
+RW_DONE. . . . . .  C ADDR   00D1H   A   
+RW_OUTER . . . . .  C ADDR   00C1H   A   
+SAMP_DLY . . . . .  C ADDR   00D3H   A   
+SBUF . . . . . . .  D ADDR   0099H   A   
+SCON . . . . . . .  D ADDR   0098H   A   
+SEND_DATA. . . . .  C ADDR   013BH   A   
+SHIFT_REG. . . . .  D ADDR   0027H   A   
+SP . . . . . . . .  D ADDR   0081H   A   
+STRT0. . . . . . .  C ADDR   005EH   A   
+STRT1. . . . . . .  C ADDR   0060H   A   
+STRT2. . . . . . .  C ADDR   0062H   A   
+T3CON. . . . . . .  D ADDR   009EH   A   
+T3FD . . . . . . .  D ADDR   009DH   A   
+TI . . . . . . . .  B ADDR   0098H.1 A   
+TMOD . . . . . . .  D ADDR   0089H   A   
+TMP_DEC. . . . . .  D ADDR   0023H   A   
+TMP_INT. . . . . .  D ADDR   0022H   A   
+UART_SEND. . . . .  C ADDR   0052H   A   
+WAIT1. . . . . . .  C ADDR   0149H   A   
+WAIT2. . . . . . .  C ADDR   014BH   A   
+WAIT3. . . . . . .  C ADDR   014DH   A   
+WAIT_FALL. . . . .  C ADDR   00A5H   A   
+WAIT_HIGH. . . . .  C ADDR   0093H   A   
+WAIT_LOW . . . . .  C ADDR   0081H   A   
+WAIT_TI. . . . . .  C ADDR   0054H   A   
+WF_DONE. . . . . .  C ADDR   00B3H   A   
+WF_OUTER . . . . .  C ADDR   00A3H   A   
+WH_DONE. . . . . .  C ADDR   00A1H   A   
+WH_OUTER . . . . .  C ADDR   0091H   A   
+WL_DONE. . . . . .  C ADDR   008FH   A   
+WL_OUTER . . . . .  C ADDR   007FH   A   
+
+
+REGISTER BANK(S) USED: 0 
+A51 MACRO ASSEMBLER  SICAKLIK                                                             05/15/2026 15:26:16 PAGE     6
+
+
+
+ASSEMBLY COMPLETE.  0 WARNING(S), 0 ERROR(S)

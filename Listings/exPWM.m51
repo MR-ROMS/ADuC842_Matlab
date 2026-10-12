@@ -1,0 +1,71 @@
+BL51 BANKED LINKER/LOCATER V6.22.4.0                                                    04/05/2026  13:04:45  PAGE 1
+
+
+BL51 BANKED LINKER/LOCATER V6.22.4.0, INVOKED BY:
+C:\USERS\USER\APPDATA\LOCAL\KEIL_V5\C51\BIN\BL51.EXE .\Objects\expwm.obj TO .\Objects\exPWM PRINT (.\Listings\exPWM.m51)
+>>  RAMSIZE (256)
+
+
+INPUT MODULES INCLUDED:
+  .\Objects\expwm.obj (EXPWM)
+
+
+LINK MAP OF MODULE:  .\Objects\exPWM (EXPWM)
+
+
+            TYPE    BASE      LENGTH    RELOCATION   SEGMENT NAME
+            -----------------------------------------------------
+
+            * * * * * * *   D A T A   M E M O R Y   * * * * * * *
+            REG     0000H     0008H     ABSOLUTE     "REG BANK 0"
+
+            * * * * * * *   C O D E   M E M O R Y   * * * * * * *
+            CODE    0000H     0025H     ABSOLUTE     
+
+
+
+SYMBOL TABLE OF MODULE:  .\Objects\exPWM (EXPWM)
+
+  VALUE           TYPE          NAME
+  ----------------------------------
+
+  -------         MODULE        EXPWM
+  C:001AH         SYMBOL        DELAY1
+  C:0000H         SYMBOL        HERE
+  C:001EH         SYMBOL        INNER
+  C:001CH         SYMBOL        OUTER
+  C:0009H         SYMBOL        PWM
+  N:00B2H         SYMBOL        PWM0H
+  N:00B1H         SYMBOL        PWM0L
+  N:00B4H         SYMBOL        PWM1H
+  N:00B3H         SYMBOL        PWM1L
+  N:00AEH         SYMBOL        PWMCON
+  C:0000H         LINE#         37
+  C:0002H         LINE#         38
+  C:0004H         LINE#         39
+  C:0007H         LINE#         41
+  C:0009H         LINE#         50
+  C:000BH         LINE#         51
+  C:000DH         LINE#         52
+  C:0010H         LINE#         53
+  C:0013H         LINE#         54
+  C:0016H         LINE#         55
+  C:0019H         LINE#         57
+  C:001AH         LINE#         61
+  C:001CH         LINE#         63
+  C:001EH         LINE#         65
+  C:001FH         LINE#         66
+  C:0020H         LINE#         67
+  C:0022H         LINE#         68
+  C:0024H         LINE#         69
+  -------         ENDMOD        EXPWM
+BL51 BANKED LINKER/LOCATER V6.22.4.0                                                  04/05/2026  13:04:45  PAGE 2
+
+
+
+******************************************************************************
+* RESTRICTED VERSION WITH 0800H BYTE CODE SIZE LIMIT; USED: 0025H BYTE ( 1%) *
+******************************************************************************
+
+Program Size: data=8.0 xdata=0 code=37
+LINK/LOCATE RUN COMPLETE.  0 WARNING(S),  0 ERROR(S)

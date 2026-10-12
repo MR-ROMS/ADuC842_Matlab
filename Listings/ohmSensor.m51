@@ -1,0 +1,99 @@
+BL51 BANKED LINKER/LOCATER V6.22.4.0                                                    04/24/2026  18:33:32  PAGE 1
+
+
+BL51 BANKED LINKER/LOCATER V6.22.4.0, INVOKED BY:
+C:\USERS\USER\APPDATA\LOCAL\KEIL_V5\C51\BIN\BL51.EXE .\Objects\adc_serial.obj TO .\Objects\ohmSensor PRINT (.\Listings\o
+>> hmSensor.m51) RAMSIZE (256)
+
+
+INPUT MODULES INCLUDED:
+  .\Objects\adc_serial.obj (ADC_SERIAL)
+
+
+LINK MAP OF MODULE:  .\Objects\ohmSensor (ADC_SERIAL)
+
+
+            TYPE    BASE      LENGTH    RELOCATION   SEGMENT NAME
+            -----------------------------------------------------
+
+            * * * * * * *   D A T A   M E M O R Y   * * * * * * *
+            REG     0000H     0008H     ABSOLUTE     "REG BANK 0"
+
+            * * * * * * *   C O D E   M E M O R Y   * * * * * * *
+            CODE    0000H     014CH     ABSOLUTE     
+
+
+
+SYMBOL TABLE OF MODULE:  .\Objects\ohmSensor (ADC_SERIAL)
+
+  VALUE           TYPE          NAME
+  ----------------------------------
+
+  -------         MODULE        ADC_SERIAL
+  N:00EFH         SYMBOL        ADCCON1
+  N:00D8H         SYMBOL        ADCCON2
+  N:00DAH         SYMBOL        ADCDATAH
+  N:00D9H         SYMBOL        ADCDATAL
+  C:010CH         SYMBOL        BEKLE_BYTE0
+  C:0127H         SYMBOL        BEKLE_BYTE1
+  C:0146H         SYMBOL        BEKLE_TX
+  C:013BH         SYMBOL        DELAY
+  C:013DH         SYMBOL        DLY0
+  C:013FH         SYMBOL        DLY1
+  C:0121H         SYMBOL        GONDER_HIGH
+  C:0144H         SYMBOL        GONDER_UART
+  C:0100H         SYMBOL        MAIN
+  B:0098H.0       SYMBOL        RI
+  D:0099H         SYMBOL        SBUF
+  D:0098H         SYMBOL        SCON
+  C:0133H         SYMBOL        SEND_LOW
+  N:009EH         SYMBOL        T3CON
+  N:009DH         SYMBOL        T3FD
+  B:0098H.1       SYMBOL        TI
+  C:011BH         SYMBOL        WAIT_ADC
+  C:0000H         LINE#         11
+  C:0100H         LINE#         15
+  C:0103H         LINE#         16
+  C:0106H         LINE#         17
+  C:0109H         LINE#         18
+  C:010CH         LINE#         21
+  C:010FH         LINE#         22
+  C:0111H         LINE#         23
+BL51 BANKED LINKER/LOCATER V6.22.4.0                                                  04/24/2026  18:33:32  PAGE 2
+
+
+  C:0113H         LINE#         24
+  C:0115H         LINE#         25
+  C:0118H         LINE#         28
+  C:011BH         LINE#         30
+  C:011DH         LINE#         31
+  C:011FH         LINE#         32
+  C:0121H         LINE#         35
+  C:0123H         LINE#         36
+  C:0125H         LINE#         37
+  C:0127H         LINE#         40
+  C:012AH         LINE#         41
+  C:012CH         LINE#         42
+  C:012EH         LINE#         43
+  C:0130H         LINE#         44
+  C:0133H         LINE#         47
+  C:0135H         LINE#         48
+  C:0137H         LINE#         49
+  C:0139H         LINE#         50
+  C:013BH         LINE#         54
+  C:013DH         LINE#         55
+  C:013FH         LINE#         56
+  C:0141H         LINE#         57
+  C:0143H         LINE#         58
+  C:0144H         LINE#         62
+  C:0146H         LINE#         64
+  C:0149H         LINE#         65
+  C:014BH         LINE#         66
+  -------         ENDMOD        ADC_SERIAL
+
+******************************************************************************
+* RESTRICTED VERSION WITH 0800H BYTE CODE SIZE LIMIT; USED: 004EH BYTE ( 3%) *
+******************************************************************************
+
+Program Size: data=8.0 xdata=0 code=332
+LINK/LOCATE RUN COMPLETE.  0 WARNING(S),  0 ERROR(S)

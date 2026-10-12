@@ -1,0 +1,172 @@
+BL51 BANKED LINKER/LOCATER V6.22.4.0                                                    06/23/2026  11:57:52  PAGE 1
+
+
+BL51 BANKED LINKER/LOCATER V6.22.4.0, INVOKED BY:
+C:\USERS\USER\APPDATA\LOCAL\KEIL_V5\C51\BIN\BL51.EXE .\Objects\PCANEWSERVO.obj TO .\Objects\PCANEWSERVO PRINT (.\Listing
+>> s\PCANEWSERVO.m51) RAMSIZE (256)
+
+
+INPUT MODULES INCLUDED:
+  .\Objects\PCANEWSERVO.obj (PCANEWSERVO)
+
+
+LINK MAP OF MODULE:  .\Objects\PCANEWSERVO (PCANEWSERVO)
+
+
+            TYPE    BASE      LENGTH    RELOCATION   SEGMENT NAME
+            -----------------------------------------------------
+
+            * * * * * * *   D A T A   M E M O R Y   * * * * * * *
+            REG     0000H     0008H     ABSOLUTE     "REG BANK 0"
+
+            * * * * * * *   C O D E   M E M O R Y   * * * * * * *
+            CODE    0000H     0148H     ABSOLUTE     
+
+
+
+SYMBOL TABLE OF MODULE:  .\Objects\PCANEWSERVO (PCANEWSERVO)
+
+  VALUE           TYPE          NAME
+  ----------------------------------
+
+  -------         MODULE        PCANEWSERVO
+  C:0060H         SYMBOL        BASLA
+  C:0138H         SYMBOL        G1
+  D:00E8H         SYMBOL        I2CCON
+  C:0120H         SYMBOL        I2C_DONGU
+  C:010AH         SYMBOL        I2C_START
+  C:0115H         SYMBOL        I2C_STOP
+  C:011EH         SYMBOL        I2C_YAZ
+  C:0136H         SYMBOL        KISA_GECIKME
+  B:00E8H.5       SYMBOL        MCO
+  B:00E8H.7       SYMBOL        MDO
+  N:0080H         SYMBOL        PCA_ADDR
+  C:0077H         SYMBOL        PCA_KURULUM
+  C:00C0H         SYMBOL        SERVO_0_SIFIR_DERECE
+  C:00E5H         SYMBOL        SERVO_0_YUZSEKSEN_DERECE
+  C:0069H         SYMBOL        SONSUZ_DONGU
+  D:00F8H         SYMBOL        SPICON
+  C:013DH         SYMBOL        U1
+  C:013FH         SYMBOL        U2
+  C:0141H         SYMBOL        U3
+  C:013BH         SYMBOL        UZUN_GECIKME
+  C:0000H         LINE#         17
+  C:0060H         LINE#         22
+  C:0063H         LINE#         24
+  C:0066H         LINE#         27
+  C:0069H         LINE#         31
+  C:006CH         LINE#         32
+  C:006FH         LINE#         35
+  C:0072H         LINE#         36
+  C:0075H         LINE#         39
+BL51 BANKED LINKER/LOCATER V6.22.4.0                                                  06/23/2026  11:57:52  PAGE 2
+
+
+  C:0077H         LINE#         46
+  C:007AH         LINE#         47
+  C:007CH         LINE#         48
+  C:007FH         LINE#         49
+  C:0081H         LINE#         50
+  C:0084H         LINE#         51
+  C:0086H         LINE#         52
+  C:0089H         LINE#         53
+  C:008CH         LINE#         54
+  C:008FH         LINE#         57
+  C:0092H         LINE#         58
+  C:0094H         LINE#         59
+  C:0097H         LINE#         60
+  C:0099H         LINE#         61
+  C:009CH         LINE#         62
+  C:009EH         LINE#         63
+  C:00A1H         LINE#         64
+  C:00A4H         LINE#         65
+  C:00A7H         LINE#         68
+  C:00AAH         LINE#         69
+  C:00ACH         LINE#         70
+  C:00AFH         LINE#         71
+  C:00B1H         LINE#         72
+  C:00B4H         LINE#         73
+  C:00B6H         LINE#         74
+  C:00B9H         LINE#         75
+  C:00BCH         LINE#         76
+  C:00BFH         LINE#         77
+  C:00C0H         LINE#         84
+  C:00C3H         LINE#         85
+  C:00C5H         LINE#         86
+  C:00C8H         LINE#         87
+  C:00CAH         LINE#         88
+  C:00CDH         LINE#         90
+  C:00CFH         LINE#         91
+  C:00D2H         LINE#         92
+  C:00D4H         LINE#         93
+  C:00D7H         LINE#         94
+  C:00D9H         LINE#         95
+  C:00DCH         LINE#         96
+  C:00DEH         LINE#         97
+  C:00E1H         LINE#         99
+  C:00E4H         LINE#         100
+  C:00E5H         LINE#         104
+  C:00E8H         LINE#         105
+  C:00EAH         LINE#         106
+  C:00EDH         LINE#         107
+  C:00EFH         LINE#         108
+  C:00F2H         LINE#         110
+  C:00F4H         LINE#         111
+  C:00F7H         LINE#         112
+  C:00F9H         LINE#         113
+  C:00FCH         LINE#         114
+  C:00FEH         LINE#         115
+  C:0101H         LINE#         116
+  C:0103H         LINE#         117
+  C:0106H         LINE#         119
+BL51 BANKED LINKER/LOCATER V6.22.4.0                                                  06/23/2026  11:57:52  PAGE 3
+
+
+  C:0109H         LINE#         120
+  C:010AH         LINE#         126
+  C:010CH         LINE#         127
+  C:010EH         LINE#         128
+  C:010FH         LINE#         129
+  C:0111H         LINE#         130
+  C:0112H         LINE#         131
+  C:0114H         LINE#         132
+  C:0115H         LINE#         135
+  C:0117H         LINE#         136
+  C:0118H         LINE#         137
+  C:011AH         LINE#         138
+  C:011BH         LINE#         139
+  C:011DH         LINE#         140
+  C:011EH         LINE#         143
+  C:0120H         LINE#         145
+  C:0121H         LINE#         146
+  C:0123H         LINE#         147
+  C:0124H         LINE#         148
+  C:0126H         LINE#         149
+  C:0127H         LINE#         150
+  C:0128H         LINE#         151
+  C:012AH         LINE#         152
+  C:012CH         LINE#         155
+  C:012EH         LINE#         156
+  C:012FH         LINE#         157
+  C:0131H         LINE#         158
+  C:0132H         LINE#         159
+  C:0133H         LINE#         160
+  C:0135H         LINE#         161
+  C:0136H         LINE#         168
+  C:0138H         LINE#         169
+  C:013AH         LINE#         170
+  C:013BH         LINE#         174
+  C:013DH         LINE#         175
+  C:013FH         LINE#         176
+  C:0141H         LINE#         177
+  C:0143H         LINE#         178
+  C:0145H         LINE#         179
+  C:0147H         LINE#         180
+  -------         ENDMOD        PCANEWSERVO
+
+******************************************************************************
+* RESTRICTED VERSION WITH 0800H BYTE CODE SIZE LIMIT; USED: 00EAH BYTE (11%) *
+******************************************************************************
+
+Program Size: data=8.0 xdata=0 code=328
+LINK/LOCATE RUN COMPLETE.  0 WARNING(S),  0 ERROR(S)

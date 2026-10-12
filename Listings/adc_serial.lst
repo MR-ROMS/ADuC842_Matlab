@@ -1,0 +1,118 @@
+A51 MACRO ASSEMBLER  ADC_SERIAL                                                           04/24/2026 18:33:32 PAGE     1
+
+
+MACRO ASSEMBLER A51 V8.2.7.0
+OBJECT MODULE PLACED IN .\Objects\adc_serial.obj
+ASSEMBLER INVOKED BY: C:\Users\User\AppData\Local\Keil_v5\C51\BIN\A51.EXE adc_serial.a51 SET(SMALL) DEBUG PRINT(.\Listin
+                      gs\adc_serial.lst) OBJECT(.\Objects\adc_serial.obj) EP
+
+LOC  OBJ            LINE     SOURCE
+
+                       1             $mod51 
+  009E                 2             T3CON     EQU 09EH
+  009D                 3             T3FD      EQU 09DH
+  00EF                 4             ADCCON1   EQU 0EFH
+  00D8                 5             ADCCON2   EQU 0D8H
+  00D9                 6             ADCDATAL  EQU 0D9H
+  00DA                 7             ADCDATAH  EQU 0DAH
+                       8     
+----                   9             CSEG
+0000                  10                     ORG 0000H
+0000 2100             11                     JMP MAIN
+0100                  12                     ORG 0100H
+0100                  13             MAIN:
+                      14     
+0100 759D2D           15                     MOV T3FD,   #02DH                          ;UART Baud Rate Setup 
+0103 759E83           16                     MOV T3CON,  #083H                          ;(9600 baud using Timer3)
+0106 759850           17                     MOV SCON,   #50H                           ;UART Mode Setup / Mode 1, 8-bit
+                              UART
+0109 75EF84           18                     MOV ADCCON1,#084H                          ; Enable ADC, single conversion 
+                             mode
+                      19     
+010C                  20             BEKLE_BYTE0:
+010C 3098FD           21                     JNB RI, BEKLE_BYTE0                        ; Wait until a byte is received
+010F C298             22                     CLR RI
+0111 E599             23                     MOV A, SBUF
+0113 313B             24                     ACALL DELAY
+0115 B400F4           25                     CJNE A, #00H, BEKLE_BYTE0
+                      26     
+                      27                     
+0118 75D810           28                     MOV ADCCON2, #010H                         ;Start ADC Conversion on CH0
+011B                  29             WAIT_ADC:
+011B E5D8             30                     MOV A, ADCCON2
+011D 5410             31                     ANL A, #010H
+011F 70FA             32                     JNZ WAIT_ADC                                ; Wait until conversion complet
+                             es
+                      33     
+0121                  34             GONDER_HIGH:                                    ; SEND HIGH BYTE 
+0121 E5DA             35                     MOV A, ADCDATAH
+0123 3144             36                     ACALL GONDER_UART
+0125 313B             37                     ACALL DELAY
+                      38     
+0127                  39             BEKLE_BYTE1:                                    ;WAIT FOR COMMAND 0x01
+0127 3098FD           40                     JNB RI, BEKLE_BYTE1
+012A C298             41                     CLR RI
+012C E599             42                     MOV A, SBUF
+012E 313B             43                     ACALL DELAY
+0130 B401F4           44                     CJNE A, #01H, BEKLE_BYTE1
+                      45     
+0133                  46             SEND_LOW:                                        ;SEND LOW BYTE
+0133 E5D9             47                     MOV A, ADCDATAL
+0135 3144             48                     ACALL GONDER_UART
+0137 313B             49                     ACALL DELAY
+0139 80D1             50                     SJMP BEKLE_BYTE0                             ; Loop back for next cycle
+                      51     
+                      52             
+013B                  53             DELAY:
+013B 7F64             54                      MOV R7, #064H
+A51 MACRO ASSEMBLER  ADC_SERIAL                                                           04/24/2026 18:33:32 PAGE     2
+
+013D 7EFF             55             DLY0:MOV R6, #0FFH
+013F DEFE             56             DLY1:DJNZ R6, DLY1
+0141 DFFA             57                      DJNZ R7, DLY0
+0143 22               58                      RET
+                      59     
+                      60             
+0144                  61             GONDER_UART:
+0144 F599             62                     MOV SBUF, A
+0146                  63             BEKLE_TX:
+0146 3099FD           64                     JNB TI, BEKLE_TX                              ; Wait until transmit complete
+0149 C299             65                     CLR TI
+014B 22               66                     RET
+                      67                     
+                      68             END
+A51 MACRO ASSEMBLER  ADC_SERIAL                                                           04/24/2026 18:33:32 PAGE     3
+
+SYMBOL TABLE LISTING
+------ ----- -------
+
+
+N A M E             T Y P E  V A L U E   ATTRIBUTES
+
+ADCCON1. . . . . .  N NUMB   00EFH   A   
+ADCCON2. . . . . .  N NUMB   00D8H   A   
+ADCDATAH . . . . .  N NUMB   00DAH   A   
+ADCDATAL . . . . .  N NUMB   00D9H   A   
+BEKLE_BYTE0. . . .  C ADDR   010CH   A   
+BEKLE_BYTE1. . . .  C ADDR   0127H   A   
+BEKLE_TX . . . . .  C ADDR   0146H   A   
+DELAY. . . . . . .  C ADDR   013BH   A   
+DLY0 . . . . . . .  C ADDR   013DH   A   
+DLY1 . . . . . . .  C ADDR   013FH   A   
+GONDER_HIGH. . . .  C ADDR   0121H   A   
+GONDER_UART. . . .  C ADDR   0144H   A   
+MAIN . . . . . . .  C ADDR   0100H   A   
+RI . . . . . . . .  B ADDR   0098H.0 A   
+SBUF . . . . . . .  D ADDR   0099H   A   
+SCON . . . . . . .  D ADDR   0098H   A   
+SEND_LOW . . . . .  C ADDR   0133H   A   
+T3CON. . . . . . .  N NUMB   009EH   A   
+T3FD . . . . . . .  N NUMB   009DH   A   
+TI . . . . . . . .  B ADDR   0098H.1 A   
+WAIT_ADC . . . . .  C ADDR   011BH   A   
+
+
+REGISTER BANK(S) USED: 0 
+
+
+ASSEMBLY COMPLETE.  0 WARNING(S), 0 ERROR(S)
